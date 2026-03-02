@@ -8,10 +8,10 @@
 <meta content="Alan Frindell" name="author">
 <meta content="
        This document defines an extension to Media over QUIC Transport (MOQT) that
-enables QPACK compression for message parameters. By leveraging QPACK's dynamic
-table, this extension significantly reduces the overhead of repeated parameter
+enables QPACK compression for contol messages. By leveraging QPACK's dynamic
+table, this extension significantly reduces the overhead of repeated
 values such as track names and authorization tokens, improving efficiency for
-sessions with many subscriptions or frequent parameter reuse. 
+sessions with many subscriptions or frequent redundant values. 
     " name="description">
 <meta content="xml2rfc 3.31.0" name="generator">
 <meta content="media over quic" name="keyword">
@@ -1087,10 +1087,10 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
 <p id="section-abstract-1">This document defines an extension to Media over QUIC Transport (MOQT) that
-enables QPACK compression for message parameters. By leveraging QPACK's dynamic
-table, this extension significantly reduces the overhead of repeated parameter
+enables QPACK compression for contol messages. By leveraging QPACK's dynamic
+table, this extension significantly reduces the overhead of repeated
 values such as track names and authorization tokens, improving efficiency for
-sessions with many subscriptions or frequent parameter reuse.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+sessions with many subscriptions or frequent redundant values.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </section>
 <section class="note rfcEditorRemove" id="section-note.1">
       <h2 id="name-about-this-document">
@@ -1178,11 +1178,6 @@ sessions with many subscriptions or frequent parameter reuse.<a href="#section-a
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3">
                 <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="auto internal xref">3.3</a>.  <a href="#name-moqt_qpack_index_setup_auth" class="internal xref">MOQT_QPACK_INDEX_SETUP_AUTH</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3.2.1">
-                    <p id="section-toc.1-1.3.2.3.2.1.1"><a href="#section-3.3.1" class="auto internal xref">3.3.1</a>.  <a href="#name-implicit-dynamic-table-seed" class="internal xref">Implicit Dynamic Table Seeding</a></p>
-</li>
-                </ul>
 </li>
             </ul>
 </li>
@@ -1324,9 +1319,6 @@ sessions with many subscriptions or frequent parameter reuse.<a href="#section-a
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.2">
                 <p id="section-toc.1-1.8.2.2.1"><a href="#section-8.2" class="auto internal xref">8.2</a>.  <a href="#name-qpack-errors" class="internal xref">QPACK Errors</a></p>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.3">
-                <p id="section-toc.1-1.8.2.3.1"><a href="#section-8.3" class="auto internal xref">8.3</a>.  <a href="#name-stream-errors" class="internal xref">Stream Errors</a></p>
-</li>
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
@@ -1423,11 +1415,10 @@ sessions with many subscriptions or frequent parameter reuse.<a href="#section-a
       <h2 id="name-introduction">
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
-<p id="section-1-1">Media over QUIC Transport (MOQT) <span>[<a href="#MOQT" class="cite xref">MOQT</a>]</span> uses message parameters to convey
-optional information in control messages. Some message fields and parameters can
-contain large values that are repeated across many messages within a
-session. The base MOQT specification transmits these parameters in full each
-time they appear, which can result in significant overhead.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-1">Media over QUIC Transport (MOQT) <span>[<a href="#MOQT" class="cite xref">MOQT</a>]</span> control message message fields and
+parameters can contain large values that are repeated across many messages
+within a session. The base MOQT specification transmits this information in full
+each time it appears, which can result in significant overhead.<a href="#section-1-1" class="pilcrow">¶</a></p>
 <p id="section-1-2">This document defines an extension that uses QPACK <span>[<a href="#QPACK" class="cite xref">QPACK</a>]</span> to compress MOQT
 message parameters. QPACK provides:<a href="#section-1-2" class="pilcrow">¶</a></p>
 <ul class="normal">
@@ -1442,8 +1433,8 @@ message parameters. QPACK provides:<a href="#section-1-2" class="pilcrow">¶</a>
 </li>
       </ul>
 <p id="section-1-4">By treating MOQT parameters as QPACK field lines, this extension enables
-efficient compression of repeated parameter values while maintaining
-compatibility with QPACK's existing infrastructure.<a href="#section-1-4" class="pilcrow">¶</a></p>
+efficient compression of repeated values while maintaining compatibility with
+QPACK's existing infrastructure.<a href="#section-1-4" class="pilcrow">¶</a></p>
 <div id="motivation">
 <section id="section-1.1">
         <h3 id="name-motivation">
@@ -1477,22 +1468,22 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 <a href="#section-3" class="section-number selfRef">3. </a><a href="#name-extension-negotiation" class="section-name selfRef">Extension Negotiation</a>
       </h2>
 <p id="section-3-1">This extension is negotiated during MOQT session establishment using Setup
-Parameters. CLIENT_SETUP and SERVER_SETUP messages always use standard MOQT
+Options. CLIENT_SETUP and SERVER_SETUP messages always use standard MOQT
 encoding and are never MOQPACK compressed.<a href="#section-3-1" class="pilcrow">¶</a></p>
 <div id="moqtqpackmaxtablecapacity">
 <section id="section-3.1">
         <h3 id="name-moqt_qpack_max_table_capaci">
 <a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-moqt_qpack_max_table_capaci" class="section-name selfRef">MOQT_QPACK_MAX_TABLE_CAPACITY</a>
         </h3>
-<p id="section-3.1-1">The MOQT_QPACK_MAX_TABLE_CAPACITY setup parameter (Parameter Type 0x10)
+<p id="section-3.1-1">The MOQT_QPACK_MAX_TABLE_CAPACITY setup option (Option Type 0x10)
 specifies the maximum size in bytes of the QPACK dynamic table the endpoint
 is willing to maintain for decoding. This corresponds to
 SETTINGS_QPACK_MAX_TABLE_CAPACITY in HTTP/3.<a href="#section-3.1-1" class="pilcrow">¶</a></p>
 <p id="section-3.1-2">The value is encoded as a variable-length integer. The default value is 0.<a href="#section-3.1-2" class="pilcrow">¶</a></p>
 <p id="section-3.1-3">QPACK compression is enabled when both endpoints send this parameter with a
 value greater than 0. If either endpoint omits this parameter or sends a
-value of 0, QPACK compression <span class="bcp14">MUST NOT</span> be used and messages use the standard
-MOQT format.<a href="#section-3.1-3" class="pilcrow">¶</a></p>
+value of 0, QPACK compression <span class="bcp14">MUST NOT</span> be used and control messages use the
+standard MOQT format.<a href="#section-3.1-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="moqtqpackblockedstreams">
@@ -1500,22 +1491,22 @@ MOQT format.<a href="#section-3.1-3" class="pilcrow">¶</a></p>
         <h3 id="name-moqt_qpack_blocked_streams">
 <a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-moqt_qpack_blocked_streams" class="section-name selfRef">MOQT_QPACK_BLOCKED_STREAMS</a>
         </h3>
-<p id="section-3.2-1">The MOQT_QPACK_BLOCKED_STREAMS setup parameter (Parameter Type 0x11) specifies
+<p id="section-3.2-1">The MOQT_QPACK_BLOCKED_STREAMS setup option (Option Type 0x11) specifies
 the maximum number of streams that can be blocked waiting for dynamic table
 updates. This corresponds to SETTINGS_QPACK_BLOCKED_STREAMS in HTTP/3.<a href="#section-3.2-1" class="pilcrow">¶</a></p>
 <p id="section-3.2-2">The value is encoded as a variable-length integer. The default value is 0,
 which prevents any stream from being blocked. When set to 0, encoders <span class="bcp14">MUST NOT</span>
 reference dynamic table entries that have not been acknowledged.<a href="#section-3.2-2" class="pilcrow">¶</a></p>
-<p id="section-3.2-3">This parameter is only meaningful when QPACK compression is enabled.<a href="#section-3.2-3" class="pilcrow">¶</a></p>
+<p id="section-3.2-3">This option is only meaningful when QPACK compression is enabled.<a href="#section-3.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="moqtqpackindexsetupauth">
+<div id="implicit-dynamic-table-seeding">
 <section id="section-3.3">
         <h3 id="name-moqt_qpack_index_setup_auth">
 <a href="#section-3.3" class="section-number selfRef">3.3. </a><a href="#name-moqt_qpack_index_setup_auth" class="section-name selfRef">MOQT_QPACK_INDEX_SETUP_AUTH</a>
         </h3>
-<p id="section-3.3-1">The MOQT_QPACK_INDEX_SETUP_AUTH setup parameter (Parameter Type 0x12) controls
-whether AUTHORIZATION TOKEN parameters from the Setup messages are implicitly
+<p id="section-3.3-1">The MOQT_QPACK_INDEX_SETUP_AUTH setup option (Option Type 0x12) controls
+whether AUTHORIZATION TOKEN options from the Setup messages are implicitly
 inserted into the dynamic table.<a href="#section-3.3-1" class="pilcrow">¶</a></p>
 <p id="section-3.3-2">The value is encoded as a variable-length integer:<a href="#section-3.3-2" class="pilcrow">¶</a></p>
 <ul class="normal">
@@ -1526,60 +1517,26 @@ inserted into the dynamic table.<a href="#section-3.3-1" class="pilcrow">¶</a><
             <p id="section-3.3-3.2.1">1: Implicitly insert setup auth tokens<a href="#section-3.3-3.2.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-3.3-4">When either endpoint omits this parameter or sends 0, implicit insertion does
-not occur and endpoints that wish to reference auth tokens must explicitly
+<p id="section-3.3-4">When either endpoint omits this option or sends 0, implicit insertion does
+not occur and endpoints that wish to reference auth tokens explicitly
 insert them via the encoder stream.<a href="#section-3.3-4" class="pilcrow">¶</a></p>
 <p id="section-3.3-5">This allows endpoints to authenticate the connection via setup auth tokens
 while still using Never-Indexed Literals for subsequent auth token references
 if desired.<a href="#section-3.3-5" class="pilcrow">¶</a></p>
-<div id="implicit-dynamic-table-seeding">
-<section id="section-3.3.1">
-          <h4 id="name-implicit-dynamic-table-seed">
-<a href="#section-3.3.1" class="section-number selfRef">3.3.1. </a><a href="#name-implicit-dynamic-table-seed" class="section-name selfRef">Implicit Dynamic Table Seeding</a>
-          </h4>
-<p id="section-3.3.1-1">When both endpoints send MOQT_QPACK_INDEX_SETUP_AUTH with value 1, any
-AUTHORIZATION TOKEN parameters from the setup messages are implicitly inserted
-into the dynamic table without requiring encoder stream instructions.<a href="#section-3.3.1-1" class="pilcrow">¶</a></p>
-<p id="section-3.3.1-2">The implicit insertion order is:<a href="#section-3.3.1-2" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-3.3.1-3">
-<li id="section-3.3.1-3.1">
-              <p id="section-3.3.1-3.1.1">Tokens from CLIENT_SETUP, in the order they appeared, are inserted into
-the client's encoder dynamic table (indices 0, 1, 2, ...)<a href="#section-3.3.1-3.1.1" class="pilcrow">¶</a></p>
-</li>
-            <li id="section-3.3.1-3.2">
-              <p id="section-3.3.1-3.2.1">Tokens from SERVER_SETUP, in the order they appeared, are inserted into
-the server's encoder dynamic table (indices 0, 1, 2, ...)<a href="#section-3.3.1-3.2.1" class="pilcrow">¶</a></p>
-</li>
-          </ol>
-<p id="section-3.3.1-4">Each endpoint's decoder knows the peer's setup tokens and can decode
-references to these implicit entries.<a href="#section-3.3.1-4" class="pilcrow">¶</a></p>
-<p id="section-3.3.1-5">This allows the client to immediately reference its setup auth token in
-the first SUBSCRIBE message using a dynamic table reference, without any
-encoder stream round-trip. For example, to reference just the auth token
-(assuming namespace and track name are sent separately):<a href="#section-3.3.1-5" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-3.3.1-6">
-<pre>
-CLIENT_SETUP:
-  MOQT_QPACK_INDEX_SETUP_AUTH: 1
-  AUTHORIZATION_TOKEN: Token Type 1, "eyJhbG..."
-
-[MOQPACK negotiated, both endpoints sent INDEX_SETUP_AUTH=1]
-
-Dynamic table (implicit):
-  index 0: AUTH_TOKEN
-
-SUBSCRIBE Compressed Block (partial):
-  Indexed Field Line (Dynamic, relative index 0)  // References setup token
-</pre><a href="#section-3.3.1-6" class="pilcrow">¶</a>
-</div>
-<p id="section-3.3.1-7">The implicit entries count against the MOQT_QPACK_MAX_TABLE_CAPACITY limit.
+<p id="section-3.3-6">When both endpoints send MOQT_QPACK_INDEX_SETUP_AUTH with value 1, any
+AUTHORIZATION TOKEN options from the Setup messages are implicitly inserted
+into the dynamic table without requiring encoder stream instructions.<a href="#section-3.3-6" class="pilcrow">¶</a></p>
+<p id="section-3.3-7">Tokens from Setup message, in the order they appeared, are inserted into
+the receiver's encoder dynamic table (indices 0, 1, 2, ...)<a href="#section-3.3-7" class="pilcrow">¶</a></p>
+<p id="section-3.3-8">This allows the client to immediately reference its setup auth token in
+the first SUBSCRIBE message using a dynamic table reference, without
+resending it on the encoder stream.<a href="#section-3.3-8" class="pilcrow">¶</a></p>
+<p id="section-3.3-9">The implicit entries count against the MOQT_QPACK_MAX_TABLE_CAPACITY limit.
 If the implicit entries would exceed the peer's advertised capacity, the
-excess entries (in reverse order) are not inserted and cannot be referenced.<a href="#section-3.3.1-7" class="pilcrow">¶</a></p>
-<p id="section-3.3.1-8">Encoder stream insertions after setup use indices starting after the
+excess entries (in reverse order) are not inserted and cannot be referenced.<a href="#section-3.3-9" class="pilcrow">¶</a></p>
+<p id="section-3.3-10">Encoder stream insertions after setup use indices starting after the
 implicit entries. For example, if CLIENT_SETUP contained 2 auth tokens,
-the first explicit insertion would be at index 2.<a href="#section-3.3.1-8" class="pilcrow">¶</a></p>
-</section>
-</div>
+the first explicit insertion would be at index 2.<a href="#section-3.3-10" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1627,7 +1584,7 @@ receiving endpoint does not enable QPACK (omits the parameter or sends value 0),
 it <span class="bcp14">MAY</span> send STOP_SENDING on these streams; this is not an error and the streams
 <span class="bcp14">SHOULD</span> be reset.<a href="#section-4.2-2" class="pilcrow">¶</a></p>
 <p id="section-4.2-3">Note that implicitly-inserted dynamic table entries from Setup auth tokens
-(see <a href="#implicit-dynamic-table-seeding" class="auto internal xref">Section 3.3.1</a>) do not require encoder stream
+(see <a href="#implicit-dynamic-table-seeding" class="auto internal xref">Section 3.3</a>) do not require encoder stream
 instructions. A Compressed Block <span class="bcp14">MAY</span> reference these implicit entries even
 if no encoder stream instructions have been sent.<a href="#section-4.2-3" class="pilcrow">¶</a></p>
 <p id="section-4.2-4">If an endpoint receives a Compressed Block that references a dynamic table
@@ -1825,7 +1782,6 @@ SUBSCRIBE Message (MOQPACK) {
   Length (16),
   Request ID (vi64),
   Track Alias (vi64),
-  Compressed Block Length (vi64),
   Compressed Block (..)
 }
 </pre><a href="#section-5.6.1-1" class="pilcrow">¶</a>
@@ -1869,7 +1825,6 @@ compressed.<a href="#section-5.6.2-2" class="pilcrow">¶</a></p>
 Standalone Fetch (MOQPACK) {
   Start Location (Location),
   End Location (Location),
-  Compressed Block Length (vi64),
   Compressed Block (..)
 }
 
@@ -1877,7 +1832,6 @@ Joining Fetch (MOQPACK) {
   Joining Request ID (vi64),
   Join Type (vi64),
   Joining Start (vi64),
-  Compressed Block Length (vi64),
   Compressed Block (..)
 }
 
@@ -1908,7 +1862,6 @@ SUBSCRIBE_NAMESPACE Message (MOQPACK) {
   Length (16),
   Request ID (vi64),
   Subscribe Options (vi64),
-  Compressed Block Length (vi64),
   Compressed Block (..)
 }
 </pre><a href="#section-5.6.4-1" class="pilcrow">¶</a>
@@ -1927,7 +1880,6 @@ PUBLISH_NAMESPACE Message (MOQPACK) {
   Type (vi64) = 0x46,
   Length (16),
   Request ID (vi64),
-  Compressed Block Length (vi64),
   Compressed Block (..)
 }
 </pre><a href="#section-5.6.5-1" class="pilcrow">¶</a>
@@ -1945,7 +1897,6 @@ PUBLISH_NAMESPACE Message (MOQPACK) {
 NAMESPACE Message (MOQPACK) {
   Type (vi64) = 0x48,
   Length (16),
-  Compressed Block Length (vi64),
   Compressed Block (..)
 }
 </pre><a href="#section-5.6.6-1" class="pilcrow">¶</a>
@@ -1964,7 +1915,6 @@ no parameters.<a href="#section-5.6.6-2" class="pilcrow">¶</a></p>
 NAMESPACE_DONE Message (MOQPACK) {
   Type (vi64) = 0x4E,
   Length (16),
-  Compressed Block Length (vi64),
   Compressed Block (..)
 }
 </pre><a href="#section-5.6.7-1" class="pilcrow">¶</a>
@@ -2040,7 +1990,6 @@ Parameter-Only Message (MOQPACK) {
   Type (vi64) = &lt;standard type&gt; | 0x40,
   Length (16),
   [Message-specific fields...],
-  Compressed Block Length (vi64),
   Compressed Block (..)
 }
 </pre><a href="#section-5.6.9-3" class="pilcrow">¶</a>
@@ -2324,7 +2273,7 @@ b. Decodes the QPACK Compressed Block to recover namespace elements,
 MOQPACK_DECOMPRESSION_FAILED.<a href="#section-6.5-3" class="pilcrow">¶</a></p>
 <p id="section-6.5-4">The total size of the decompressed message fields (the sum of all parameter
 values, namespace elements, and track name, excluding interior length fields)
-<span class="bcp14">MUST NOT</span> exceed 65536 bytes. If a decompressed message exceeds this limit,
+<span class="bcp14">MUST NOT</span> exceed 65535 bytes. If a decompressed message exceeds this limit,
 the receiver <span class="bcp14">MUST</span> close the session with MOQPACK_DECOMPRESSION_FAILED.<a href="#section-6.5-4" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -2378,7 +2327,7 @@ for sensitive values when:
 - The value has low entropy and is vulnerable to compression attacks<a href="#section-7.1.2-1" class="pilcrow">¶</a></p>
 <p id="section-7.1.2-2">Note that when MOQT_QPACK_INDEX_SETUP_AUTH is enabled, setup auth tokens are
 implicitly inserted into the dynamic table (see
-<a href="#implicit-dynamic-table-seeding" class="auto internal xref">Section 3.3.1</a>).  Endpoints that require 'N' bit semantics
+<a href="#implicit-dynamic-table-seeding" class="auto internal xref">Section 3.3</a>).  Endpoints that require 'N' bit semantics
 for auth tokens <span class="bcp14">MUST NOT</span> enable MOQT_QPACK_INDEX_SETUP_AUTH and <span class="bcp14">SHOULD</span> instead
 send tokens as Never-Indexed Literals in each message.<a href="#section-7.1.2-2" class="pilcrow">¶</a></p>
 <p id="section-7.1.2-3">Intermediaries that re-encode MOQT messages <span class="bcp14">MUST</span> preserve the 'N' bit
@@ -2507,16 +2456,6 @@ session termination. The specific mapping is:<a href="#section-8.2-1" class="pil
             </tr>
           </tbody>
         </table>
-</section>
-</div>
-<div id="stream-errors">
-<section id="section-8.3">
-        <h3 id="name-stream-errors">
-<a href="#section-8.3" class="section-number selfRef">8.3. </a><a href="#name-stream-errors" class="section-name selfRef">Stream Errors</a>
-        </h3>
-<p id="section-8.3-1">If a QPACK encoder or decoder stream is reset or closed before the MOQT
-session ends, the receiving endpoint <span class="bcp14">MUST</span> close the session with
-PROTOCOL_VIOLATION.<a href="#section-8.3-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2907,7 +2846,6 @@ SUBSCRIBE Message:
   Type: 0x3
   Request ID: 2
   Track Alias: 101
-  Compressed Block Length: 12
   Compressed Block:
     Required Insert Count: 3
     Base: Sign=0, Delta=0
@@ -2933,7 +2871,6 @@ SUBSCRIBE Message:
   Type: 0x3
   Request ID: 3
   Track Alias: 102
-  Compressed Block Length: 12
   Compressed Block:
     Required Insert Count: 3
     Base: Sign=0, Delta=0
