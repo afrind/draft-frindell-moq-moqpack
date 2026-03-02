@@ -40,7 +40,7 @@ informative:
 --- abstract
 
 This document defines an extension to Media over QUIC Transport (MOQT) that
-enables QPACK compression for contol messages. By leveraging QPACK's dynamic
+enables QPACK compression for control messages. By leveraging QPACK's dynamic
 table, this extension significantly reduces the overhead of repeated
 values such as track names and authorization tokens, improving efficiency for
 sessions with many subscriptions or frequent redundant values.
@@ -50,7 +50,7 @@ sessions with many subscriptions or frequent redundant values.
 
 # Introduction
 
-Media over QUIC Transport (MOQT) {{MOQT}} control message message fields and
+Media over QUIC Transport (MOQT) {{MOQT}} control message fields and
 parameters can contain large values that are repeated across many messages
 within a session. The base MOQT specification transmits this information in full
 each time it appears, which can result in significant overhead.
@@ -138,8 +138,8 @@ When both endpoints send MOQT_QPACK_INDEX_SETUP_AUTH with value 1, any
 AUTHORIZATION TOKEN options from the Setup messages are implicitly inserted
 into the dynamic table without requiring encoder stream instructions.
 
-Tokens from Setup message, in the order they appeared, are inserted into
-the receiver's encoder dynamic table (indices 0, 1, 2, ...)
+Tokens from the Setup message, in the order they appeared, are inserted into
+the receiver's decoder dynamic table (indices 0, 1, 2, ...)
 
 This allows the client to immediately reference its setup auth token in
 the first SUBSCRIBE message using a dynamic table reference, without
@@ -213,6 +213,9 @@ For example:
 - SUBSCRIBE standard = 0x03
 - SUBSCRIBE MOQPACK = 0x43
 
+All MOQPACK message types listed in this document are reserved in the MOQT
+message type registry and MUST NOT be used for other purposes.
+
 When MOQPACK is negotiated, endpoints MUST accept both standard and MOQPACK
 formats for all applicable messages. An endpoint MAY send either format, but
 SHOULD prefer MOQPACK format to benefit from compression.
@@ -224,6 +227,12 @@ In MOQPACK format, Track Namespace, Track Name, and Parameters are moved into a
 QPACK Compressed Block. Other message-specific fields including Properties
 remain unchanged.
 
+When the Compressed Block is the last field in the message, it extends to the
+end of the message payload (as determined by the message Length field) and no
+explicit Compressed Block Length is needed. When additional fields follow the
+Compressed Block (such as Properties), an explicit Compressed Block Length
+field is present to delimit the block.
+
 ## Pseudo-Parameter Types
 
 The following pseudo-parameter types are reserved for encoding namespace and
@@ -231,13 +240,33 @@ track name fields in the Compressed Block:
 
 | Type | Name | Description |
 |------|------|-------------|
-| 0x00 | TRACK_NAMESPACE_ELEMENT | Single element of a namespace tuple |
-| 0x01 | TRACK_NAMESPACE_SET | Full serialized namespace tuple |
-| 0x02 | TRACK_NAME | Track Name |
+| 0x0A | TRACK_NAMESPACE_ELEMENT | Single element of a namespace tuple |
+| 0x0B | TRACK_NAMESPACE_SET | Full serialized namespace tuple |
+| 0x0C | TRACK_NAME | Track Name |
 
 These pseudo-types use the same encoding as regular parameters: Literal with
 Static Name Reference for new values, or Indexed with Dynamic Table for
 previously-inserted values.
+
+### TRACK_NAMESPACE_SET Value Format
+
+The value of a TRACK_NAMESPACE_SET field uses the standard MOQT Track Namespace
+serialization as defined in {{MOQT}}:
+
+~~~
+TRACK_NAMESPACE_SET Value {
+  Number of Track Namespace Fields (vi64),
+  Track Namespace Field (..) ...
+}
+
+Track Namespace Field {
+  Track Namespace Field Length (vi64),
+  Track Namespace Field Value (..)
+}
+~~~
+
+Each Track Namespace Field Value MUST contain at least one byte, consistent
+with the requirement in {{MOQT}}.
 
 ## Namespace Reconstruction
 
@@ -283,12 +312,12 @@ followed by parameters in increasing order of parameter type.
 
 Within the namespace elements section, entries appear in the order they
 contribute to the namespace tuple and are not required to be in increasing
-order of type. TRACK_NAMESPACE_ELEMENT (0x00) and TRACK_NAMESPACE_SET (0x01)
+order of type. TRACK_NAMESPACE_ELEMENT (0x0A) and TRACK_NAMESPACE_SET (0x0B)
 MAY be intermixed.
 
-Parameters (types 0x03 and above) MUST appear in increasing order of their
-parameter type. If parameters appear out of order, the receiver MUST close
-the session with PROTOCOL_VIOLATION.
+Parameters (excluding pseudo-parameter types) MUST appear in increasing order
+of their parameter type. If parameters appear out of order, the receiver MUST
+close the session with PROTOCOL_VIOLATION.
 
 ## Required Fields
 
@@ -322,7 +351,7 @@ SUBSCRIBE Message (MOQPACK) {
 ~~~
 
 The Compressed Block contains namespace elements (TRACK_NAMESPACE_ELEMENT and/or
-TRACK_NAMESPACE_SET), TRACK_NAME (0x02), and any parameters
+TRACK_NAMESPACE_SET), TRACK_NAME (0x0C), and any parameters
 (AUTHORIZATION_TOKEN, SUBSCRIBER_PRIORITY, etc.).
 
 ### PUBLISH
@@ -552,6 +581,8 @@ The static table index equals the MOQT parameter type:
 For example:
 * Static index 0x02 represents DELIVERY_TIMEOUT
 * Static index 0x03 represents AUTHORIZATION_TOKEN
+* Static index 0x0A represents TRACK_NAMESPACE_ELEMENT
+* Static index 0x0C represents TRACK_NAME
 * Static index 0x20 represents SUBSCRIBER_PRIORITY
 
 This means any valid MOQT parameter type can be referenced by static index
@@ -600,8 +631,10 @@ Receivers MUST treat prohibited encodings as a PROTOCOL_VIOLATION.
 ## Dynamic Table
 
 Dynamic table entries store complete MOQT parameters (type and value).
-The entry size calculation follows {{QPACK}} Section 3.2.1, using a fixed
-name size of 4 bytes for the parameter type regardless of its encoded length.
+The entry size calculation follows {{QPACK}} Section 3.2.1: the size of an
+entry is the sum of its name size, value size, and 32 bytes of overhead.
+This extension uses a fixed name size of 4 bytes for the parameter type
+regardless of its encoded length.
 
 ### Encoder Stream Instructions
 
@@ -745,7 +778,8 @@ Writing large encoder instructions can cause deadlocks if the decoder
 withholds flow control credit until the instruction is complete. To avoid
 this, encoders SHOULD NOT write an encoder instruction unless sufficient
 stream and connection flow-control credit is available for the entire
-instruction. See {{QPACK}} Section 2.1.3.
+instruction. If sufficient credit is not available, encoders SHOULD use
+literal encodings instead. See {{QPACK}} Section 2.1.3.
 
 ## Decoder Behavior
 
@@ -868,9 +902,31 @@ QPACK Compressed Blocks and MUST NOT appear in standard Parameters fields.
 
 | Parameter Type | Parameter Name | Specification |
 |----------------|----------------|---------------|
-| 0x00 | TRACK_NAMESPACE_ELEMENT | {{pseudo-parameter-types}} |
-| 0x01 | TRACK_NAMESPACE_SET | {{pseudo-parameter-types}} |
-| 0x02 | TRACK_NAME | {{pseudo-parameter-types}} |
+| 0x0A | TRACK_NAMESPACE_ELEMENT | {{pseudo-parameter-types}} |
+| 0x0B | TRACK_NAMESPACE_SET | {{pseudo-parameter-types}} |
+| 0x0C | TRACK_NAME | {{pseudo-parameter-types}} |
+
+## Message Types
+
+This document reserves the following message types in the "MOQT Message
+Types" registry for use as MOQPACK-format messages:
+
+| Message Type | Name | Specification |
+|--------------|------|---------------|
+| 0x42 | MOQPACK REQUEST_UPDATE | {{moqpack-message-formats}} |
+| 0x43 | MOQPACK SUBSCRIBE | {{moqpack-message-formats}} |
+| 0x44 | MOQPACK SUBSCRIBE_OK | {{moqpack-message-formats}} |
+| 0x45 | MOQPACK REQUEST_ERROR | {{moqpack-message-formats}} |
+| 0x46 | MOQPACK PUBLISH_NAMESPACE | {{moqpack-message-formats}} |
+| 0x47 | MOQPACK REQUEST_OK | {{moqpack-message-formats}} |
+| 0x48 | MOQPACK NAMESPACE | {{moqpack-message-formats}} |
+| 0x4D | MOQPACK TRACK_STATUS | {{moqpack-message-formats}} |
+| 0x4E | MOQPACK NAMESPACE_DONE | {{moqpack-message-formats}} |
+| 0x51 | MOQPACK SUBSCRIBE_NAMESPACE | {{moqpack-message-formats}} |
+| 0x56 | MOQPACK FETCH | {{moqpack-message-formats}} |
+| 0x58 | MOQPACK FETCH_OK | {{moqpack-message-formats}} |
+| 0x5D | MOQPACK PUBLISH | {{moqpack-message-formats}} |
+| 0x5E | MOQPACK PUBLISH_OK | {{moqpack-message-formats}} |
 
 ## Session Error Codes
 
@@ -923,10 +979,10 @@ name "audio" is sent as a literal rather than inserted:
 ~~~
 Encoder Stream:
   Insert With Static Name Reference
-    Name Index: 0x00 (TRACK_NAMESPACE_ELEMENT)
+    Name Index: 0x0A (TRACK_NAMESPACE_ELEMENT)
     Value: "conference"
   Insert With Static Name Reference
-    Name Index: 0x00 (TRACK_NAMESPACE_ELEMENT)
+    Name Index: 0x0A (TRACK_NAMESPACE_ELEMENT)
     Value: "room42"
 ~~~
 
@@ -942,16 +998,15 @@ The encoder sends the SUBSCRIBE with Required Insert Count = 3 and Base = 3:
 
 ~~~
 SUBSCRIBE Message:
-  Type: 0x3
+  Type: 0x43
   Request ID: 1
   Track Alias: 100
-  Compressed Block Length: 12
   Compressed Block:
     Required Insert Count: 3 (encoded per RFC 9204 Section 4.5.1.1)
     Base: Sign=0, Delta=0 (Base = Required Insert Count = 3)
     Indexed Field Line (Dynamic, relative index 1)  // abs 1 = "conference"
     Indexed Field Line (Dynamic, relative index 0)  // abs 2 = "room42"
-    Literal Field Line (Static Name 0x02, Value "audio")  // TRACK_NAME
+    Literal Field Line (Static Name 0x0C, Value "audio")  // TRACK_NAME
     Indexed Field Line (Dynamic, relative index 2)  // abs 0 = AUTH_TOKEN
 ~~~
 
@@ -972,7 +1027,7 @@ track name is sent as literal again:
 
 ~~~
 SUBSCRIBE Message:
-  Type: 0x3
+  Type: 0x43
   Request ID: 2
   Track Alias: 101
   Compressed Block:
@@ -980,7 +1035,7 @@ SUBSCRIBE Message:
     Base: Sign=0, Delta=0
     Indexed Field Line (Dynamic, relative index 1)  // "conference"
     Indexed Field Line (Dynamic, relative index 0)  // "room42"
-    Literal Field Line (Static Name 0x02, Value "audio")  // TRACK_NAME
+    Literal Field Line (Static Name 0x0C, Value "audio")  // TRACK_NAME
     Indexed Field Line (Dynamic, relative index 2)  // AUTH_TOKEN
 ~~~
 
@@ -994,7 +1049,7 @@ stream instructions needed:
 
 ~~~
 SUBSCRIBE Message:
-  Type: 0x3
+  Type: 0x43
   Request ID: 3
   Track Alias: 102
   Compressed Block:
@@ -1002,23 +1057,11 @@ SUBSCRIBE Message:
     Base: Sign=0, Delta=0
     Indexed Field Line (Dynamic, relative index 1)  // "conference"
     Indexed Field Line (Dynamic, relative index 0)  // "room42"
-    Literal Field Line (Static Name 0x02, Value "video")  // TRACK_NAME
+    Literal Field Line (Static Name 0x0C, Value "video")  // TRACK_NAME
     Indexed Field Line (Dynamic, relative index 2)  // AUTH_TOKEN
 ~~~
 
 The namespace elements are reused; the different track name is sent as a literal.
-
-## Total Savings
-{:numbered="false"}
-
-| Encoding | Sub 1 | Sub 2 | Sub 3 | Total |
-|----------|-------|-------|-------|-------|
-| Uncompressed | 526 | 526 | 526 | 1578 |
-| MOQPACK | 32* | 12 | 12 | 56 |
-
-\* Includes encoder stream insertions for namespace elements (~20 bytes)
-
-Savings: ~96% reduction in namespace/name/token overhead.
 
 
 # Code Point Summary
@@ -1048,9 +1091,9 @@ This appendix summarizes all code points defined or used by this extension.
 
 | Type | Name |
 |------|------|
-| 0x00 | TRACK_NAMESPACE_ELEMENT |
-| 0x01 | TRACK_NAMESPACE_SET |
-| 0x02 | TRACK_NAME |
+| 0x0A | TRACK_NAMESPACE_ELEMENT |
+| 0x0B | TRACK_NAMESPACE_SET |
+| 0x0C | TRACK_NAME |
 
 ## MOQPACK Message Types
 {:numbered="false"}
@@ -1073,3 +1116,68 @@ The MOQPACK flag bit (0x40) is OR'd with standard MOQT message types:
 | 0x18 | 0x58 | FETCH_OK |
 | 0x1D | 0x5D | PUBLISH |
 | 0x1E | 0x5E | PUBLISH_OK |
+
+
+# QPACK Library Adaptation Notes
+{:numbered="false"}
+
+This appendix summarizes the modifications needed to use a standard QPACK
+library (designed for HTTP/3) with this extension.
+
+## Static Table
+{:numbered="false"}
+
+Standard QPACK libraries include a static table of 99 predefined HTTP header
+(name, value) pairs. For MOQPACK, the static table is reinterpreted: the
+static table index directly represents the MOQT parameter type integer, and
+there are no predefined values. Implementations need to replace or bypass the
+HTTP static table. A simple approach is to treat the static table as a
+mapping from index to a 4-byte big-endian representation of the parameter
+type, with no predefined value.
+
+## Prohibited Encodings
+{:numbered="false"}
+
+Standard QPACK supports all field line representations. MOQPACK prohibits
+several (see {{field-line-interpretation}}). Implementations should configure
+the encoder to only emit:
+
+* Literal Field Line With Static Name Reference (for new parameter values)
+* Indexed Field Line with Dynamic Table (for previously-inserted values)
+* Indexed Field Line with Post-Base Index
+
+And should configure the decoder to reject:
+
+* Indexed Field Line with Static Table
+* Literal Field Line With Dynamic Name Reference
+* Literal Field Line with Post-Base Name Reference
+* Literal Field Line With Literal Name
+* Huffman-encoded string literals (H=1)
+
+## Encoder Stream Instructions
+{:numbered="false"}
+
+Only two insertion forms are used:
+
+* Insert With Static Name Reference
+* Duplicate
+
+Insert With Dynamic Name Reference and Insert With Literal Name are
+not used.
+
+## Decoder Stream: Request IDs Instead of Stream IDs
+{:numbered="false"}
+
+Standard QPACK decoder instructions (Section Acknowledgment, Stream
+Cancellation) carry QUIC stream IDs. In MOQPACK, these carry MOQT
+Request IDs instead (see {{decoder-instructions-with-request-ids}}).
+The encoder needs to track Compressed Blocks per Request ID rather than
+per stream ID. This also enables MOQPACK to operate over WebTransport
+where QUIC stream IDs are not exposed to the application.
+
+## Entry Size Calculation
+{:numbered="false"}
+
+The name size for all entries is fixed at 4 bytes (rather than the
+variable-length header name strings used in HTTP). The 32-byte per-entry
+overhead from {{QPACK}} Section 3.2.1 still applies.
