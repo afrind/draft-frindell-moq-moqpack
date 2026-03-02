@@ -5,15 +5,19 @@
 <meta content="Common,Latin" name="scripts">
 <meta content="initial-scale=1.0" name="viewport">
 <title>QPACK Compression for MoQ Transport</title>
-<meta content="Your Name Here" name="author">
+<meta content="Alan Frindell" name="author">
 <meta content="
-       TODO Abstract 
+       This document defines an extension to Media over QUIC Transport (MOQT) that
+enables QPACK compression for message parameters. By leveraging QPACK's dynamic
+table, this extension significantly reduces the overhead of repeated parameter
+values such as track names and authorization tokens, improving efficiency for
+sessions with many subscriptions or frequent parameter reuse. 
     " name="description">
 <meta content="xml2rfc 3.31.0" name="generator">
-<meta content="next generation" name="keyword">
-<meta content="unicorn" name="keyword">
-<meta content="sparkling distributed ledger" name="keyword">
-<meta content="draft-todo-yourname-protocol-latest" name="ietf.draft">
+<meta content="media over quic" name="keyword">
+<meta content="qpack" name="keyword">
+<meta content="compression" name="keyword">
+<meta content="draft-frindell-moq-moqpack-latest" name="ietf.draft">
 <!-- Generator version information:
   xml2rfc 3.31.0
     Python 3.12.12
@@ -1050,7 +1054,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <td class="right">March 2026</td>
 </tr></thead>
 <tfoot><tr>
-<td class="left">Here</td>
+<td class="left">Frindell</td>
 <td class="center">Expires 3 September 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
@@ -1059,22 +1063,22 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <div id="internal-metadata" class="document-information">
 <dl id="identifiers">
 <dt class="label-workgroup">Workgroup:</dt>
-<dd class="workgroup">WG Working Group</dd>
+<dd class="workgroup">Media Over QUIC</dd>
 <dt class="label-internet-draft">Internet-Draft:</dt>
-<dd class="internet-draft">draft-todo-yourname-protocol-latest</dd>
+<dd class="internet-draft">draft-frindell-moq-moqpack-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
 <time datetime="2026-03-02" class="published">2 March 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
-<dd class="intended-status">Informational</dd>
+<dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
 <dd class="expires"><time datetime="2026-09-03">3 September 2026</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
-      <div class="author-name">Y. N. Here</div>
-<div class="org">Your Organization Here</div>
+      <div class="author-name">A. Frindell</div>
+<div class="org">Meta</div>
 </div>
 </dd>
 </dl>
@@ -1082,7 +1086,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <h1 id="title">QPACK Compression for MoQ Transport</h1>
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
-<p id="section-abstract-1">TODO Abstract<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+<p id="section-abstract-1">This document defines an extension to Media over QUIC Transport (MOQT) that
+enables QPACK compression for message parameters. By leveraging QPACK's dynamic
+table, this extension significantly reduces the overhead of repeated parameter
+values such as track names and authorization tokens, improving efficiency for
+sessions with many subscriptions or frequent parameter reuse.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </section>
 <section class="note rfcEditorRemove" id="section-note.1">
       <h2 id="name-about-this-document">
@@ -1090,14 +1098,15 @@ svg :is([fill="white"], [fill^="#fff"]) {
       </h2>
 <p id="section-note.1-1">This note is to be removed before publishing as an RFC.<a href="#section-note.1-1" class="pilcrow">¶</a></p>
 <p id="section-note.1-2">
-        The latest revision of this draft can be found at <span><a href="https://example.com/LATEST">https://example.com/LATEST</a></span>.
-        Status information for this document may be found at <span><a href="https://datatracker.ietf.org/doc/draft-todo-yourname-protocol/">https://datatracker.ietf.org/doc/draft-todo-yourname-protocol/</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
+        The latest revision of this draft can be found at <span><a href="https://afrind.github.io/draft-frindell-moq-moqpack/draft-frindell-moq-moqpack.html">https://afrind.github.io/draft-frindell-moq-moqpack/draft-frindell-moq-moqpack.html</a></span>.
+        Status information for this document may be found at <span><a href="https://datatracker.ietf.org/doc/draft-frindell-moq-moqpack/">https://datatracker.ietf.org/doc/draft-frindell-moq-moqpack/</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
 <p id="section-note.1-3">
         Discussion of this document takes place on the
-        WG Working Group mailing list (<span><a href="mailto:WG@example.com">mailto:WG@example.com</a></span>),
-        which is archived at <span><a href="https://example.com/WG">https://example.com/WG</a></span>.<a href="#section-note.1-3" class="pilcrow">¶</a></p>
+        Media Over QUIC Working Group mailing list (<span><a href="mailto:moq@ietf.org">mailto:moq@ietf.org</a></span>),
+        which is archived at <span><a href="https://mailarchive.ietf.org/arch/browse/moq/">https://mailarchive.ietf.org/arch/browse/moq/</a></span>.
+        Subscribe at <span><a href="https://www.ietf.org/mailman/listinfo/moq/">https://www.ietf.org/mailman/listinfo/moq/</a></span>.<a href="#section-note.1-3" class="pilcrow">¶</a></p>
 <p id="section-note.1-4">Source for this draft and an issue tracker can be found at
-        <span><a href="https://github.com/USER/REPO">https://github.com/USER/REPO</a></span>.<a href="#section-note.1-4" class="pilcrow">¶</a></p>
+        <span><a href="https://github.com/afrind/draft-frindell-moq-moqpack">https://github.com/afrind/draft-frindell-moq-moqpack</a></span>.<a href="#section-note.1-4" class="pilcrow">¶</a></p>
 </section>
 <div id="status-of-memo">
 <section id="section-boilerplate.1">
@@ -1149,24 +1158,261 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <nav class="toc"><ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
             <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.1">
+                <p id="section-toc.1-1.1.2.1.1" class="keepWithNext"><a href="#section-1.1" class="auto internal xref">1.1</a>.  <a href="#name-motivation" class="internal xref">Motivation</a></p>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
             <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-conventions-and-definitions" class="internal xref">Conventions and Definitions</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
-            <p id="section-toc.1-1.3.1" class="keepWithNext"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-extension-negotiation" class="internal xref">Extension Negotiation</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1">
+                <p id="section-toc.1-1.3.2.1.1"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-moqt_qpack_max_table_capaci" class="internal xref">MOQT_QPACK_MAX_TABLE_CAPACITY</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2">
+                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-moqt_qpack_blocked_streams" class="internal xref">MOQT_QPACK_BLOCKED_STREAMS</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3">
+                <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="auto internal xref">3.3</a>.  <a href="#name-moqt_qpack_index_setup_auth" class="internal xref">MOQT_QPACK_INDEX_SETUP_AUTH</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3.2.1">
+                    <p id="section-toc.1-1.3.2.3.2.1.1"><a href="#section-3.3.1" class="auto internal xref">3.3.1</a>.  <a href="#name-implicit-dynamic-table-seed" class="internal xref">Implicit Dynamic Table Seeding</a></p>
+</li>
+                </ul>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
-            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-qpack-streams" class="internal xref">QPACK Streams</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1">
+                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-stream-types" class="internal xref">Stream Types</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2">
+                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-stream-initialization" class="internal xref">Stream Initialization</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3">
+                <p id="section-toc.1-1.4.2.3.1"><a href="#section-4.3" class="auto internal xref">4.3</a>.  <a href="#name-stream-lifetime" class="internal xref">Stream Lifetime</a></p>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
-            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-compressed-message-formats" class="internal xref">Compressed Message Formats</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1">
+                <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="auto internal xref">5.1</a>.  <a href="#name-moqpack-flag-bit" class="internal xref">MOQPACK Flag Bit</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.2">
+                <p id="section-toc.1-1.5.2.2.1"><a href="#section-5.2" class="auto internal xref">5.2</a>.  <a href="#name-pseudo-parameter-types" class="internal xref">Pseudo-Parameter Types</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.3">
+                <p id="section-toc.1-1.5.2.3.1"><a href="#section-5.3" class="auto internal xref">5.3</a>.  <a href="#name-namespace-reconstruction" class="internal xref">Namespace Reconstruction</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.4">
+                <p id="section-toc.1-1.5.2.4.1"><a href="#section-5.4" class="auto internal xref">5.4</a>.  <a href="#name-field-ordering" class="internal xref">Field Ordering</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.5">
+                <p id="section-toc.1-1.5.2.5.1"><a href="#section-5.5" class="auto internal xref">5.5</a>.  <a href="#name-required-fields" class="internal xref">Required Fields</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.6">
+                <p id="section-toc.1-1.5.2.6.1"><a href="#section-5.6" class="auto internal xref">5.6</a>.  <a href="#name-moqpack-message-formats" class="internal xref">MOQPACK Message Formats</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.6.2.1">
+                    <p id="section-toc.1-1.5.2.6.2.1.1"><a href="#section-5.6.1" class="auto internal xref">5.6.1</a>.  <a href="#name-subscribe" class="internal xref">SUBSCRIBE</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.6.2.2">
+                    <p id="section-toc.1-1.5.2.6.2.2.1"><a href="#section-5.6.2" class="auto internal xref">5.6.2</a>.  <a href="#name-publish" class="internal xref">PUBLISH</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.6.2.3">
+                    <p id="section-toc.1-1.5.2.6.2.3.1"><a href="#section-5.6.3" class="auto internal xref">5.6.3</a>.  <a href="#name-fetch" class="internal xref">FETCH</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.6.2.4">
+                    <p id="section-toc.1-1.5.2.6.2.4.1"><a href="#section-5.6.4" class="auto internal xref">5.6.4</a>.  <a href="#name-subscribe_namespace" class="internal xref">SUBSCRIBE_NAMESPACE</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.6.2.5">
+                    <p id="section-toc.1-1.5.2.6.2.5.1"><a href="#section-5.6.5" class="auto internal xref">5.6.5</a>.  <a href="#name-publish_namespace" class="internal xref">PUBLISH_NAMESPACE</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.6.2.6">
+                    <p id="section-toc.1-1.5.2.6.2.6.1"><a href="#section-5.6.6" class="auto internal xref">5.6.6</a>.  <a href="#name-namespace" class="internal xref">NAMESPACE</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.6.2.7">
+                    <p id="section-toc.1-1.5.2.6.2.7.1"><a href="#section-5.6.7" class="auto internal xref">5.6.7</a>.  <a href="#name-namespace_done" class="internal xref">NAMESPACE_DONE</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.6.2.8">
+                    <p id="section-toc.1-1.5.2.6.2.8.1"><a href="#section-5.6.8" class="auto internal xref">5.6.8</a>.  <a href="#name-track_status" class="internal xref">TRACK_STATUS</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.6.2.9">
+                    <p id="section-toc.1-1.5.2.6.2.9.1"><a href="#section-5.6.9" class="auto internal xref">5.6.9</a>.  <a href="#name-parameter-only-messages" class="internal xref">Parameter-Only Messages</a></p>
+</li>
+                </ul>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
-            <p id="section-toc.1-1.6.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-qpack-encoding" class="internal xref">QPACK Encoding</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1">
+                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-compressed-block-format" class="internal xref">Compressed Block Format</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2">
+                <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="auto internal xref">6.2</a>.  <a href="#name-indexing" class="internal xref">Indexing</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.3">
+                <p id="section-toc.1-1.6.2.3.1"><a href="#section-6.3" class="auto internal xref">6.3</a>.  <a href="#name-moqt-static-table-semantics" class="internal xref">MOQT Static Table Semantics</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.3.2.1">
+                    <p id="section-toc.1-1.6.2.3.2.1.1"><a href="#section-6.3.1" class="auto internal xref">6.3.1</a>.  <a href="#name-field-line-interpretation" class="internal xref">Field Line Interpretation</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.4">
+                <p id="section-toc.1-1.6.2.4.1"><a href="#section-6.4" class="auto internal xref">6.4</a>.  <a href="#name-dynamic-table" class="internal xref">Dynamic Table</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.4.2.1">
+                    <p id="section-toc.1-1.6.2.4.2.1.1"><a href="#section-6.4.1" class="auto internal xref">6.4.1</a>.  <a href="#name-encoder-stream-instructions" class="internal xref">Encoder Stream Instructions</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.4.2.2">
+                    <p id="section-toc.1-1.6.2.4.2.2.1"><a href="#section-6.4.2" class="auto internal xref">6.4.2</a>.  <a href="#name-parameter-value-encoding" class="internal xref">Parameter Value Encoding</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.4.2.3">
+                    <p id="section-toc.1-1.6.2.4.2.3.1"><a href="#section-6.4.3" class="auto internal xref">6.4.3</a>.  <a href="#name-authorization-token-encodin" class="internal xref">Authorization Token Encoding</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.5">
+                <p id="section-toc.1-1.6.2.5.1"><a href="#section-6.5" class="auto internal xref">6.5</a>.  <a href="#name-decoding" class="internal xref">Decoding</a></p>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
-            <p id="section-toc.1-1.7.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-dynamic-table-management" class="internal xref">Dynamic Table Management</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1">
+                <p id="section-toc.1-1.7.2.1.1"><a href="#section-7.1" class="auto internal xref">7.1</a>.  <a href="#name-encoder-behavior" class="internal xref">Encoder Behavior</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1.2.1">
+                    <p id="section-toc.1-1.7.2.1.2.1.1"><a href="#section-7.1.1" class="auto internal xref">7.1.1</a>.  <a href="#name-known-received-count" class="internal xref">Known Received Count</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1.2.2">
+                    <p id="section-toc.1-1.7.2.1.2.2.1"><a href="#section-7.1.2" class="auto internal xref">7.1.2</a>.  <a href="#name-never-indexed-literals" class="internal xref">Never-Indexed Literals</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1.2.3">
+                    <p id="section-toc.1-1.7.2.1.2.3.1"><a href="#section-7.1.3" class="auto internal xref">7.1.3</a>.  <a href="#name-avoiding-flow-control-deadl" class="internal xref">Avoiding Flow Control Deadlocks</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.2">
+                <p id="section-toc.1-1.7.2.2.1"><a href="#section-7.2" class="auto internal xref">7.2</a>.  <a href="#name-decoder-behavior" class="internal xref">Decoder Behavior</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.2.2.1">
+                    <p id="section-toc.1-1.7.2.2.2.1.1"><a href="#section-7.2.1" class="auto internal xref">7.2.1</a>.  <a href="#name-decoder-instructions-with-r" class="internal xref">Decoder Instructions with Request IDs</a></p>
+</li>
+                </ul>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
+            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-error-handling" class="internal xref">Error Handling</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.1">
+                <p id="section-toc.1-1.8.2.1.1"><a href="#section-8.1" class="auto internal xref">8.1</a>.  <a href="#name-moqpack_decompression_faile" class="internal xref">MOQPACK_DECOMPRESSION_FAILED</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.2">
+                <p id="section-toc.1-1.8.2.2.1"><a href="#section-8.2" class="auto internal xref">8.2</a>.  <a href="#name-qpack-errors" class="internal xref">QPACK Errors</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.3">
+                <p id="section-toc.1-1.8.2.3.1"><a href="#section-8.3" class="auto internal xref">8.3</a>.  <a href="#name-stream-errors" class="internal xref">Stream Errors</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
+            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.1">
+                <p id="section-toc.1-1.9.2.1.1"><a href="#section-9.1" class="auto internal xref">9.1</a>.  <a href="#name-dynamic-table-state" class="internal xref">Dynamic Table State</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.2">
+                <p id="section-toc.1-1.9.2.2.1"><a href="#section-9.2" class="auto internal xref">9.2</a>.  <a href="#name-compression-oracle-attacks" class="internal xref">Compression Oracle Attacks</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.3">
+                <p id="section-toc.1-1.9.2.3.1"><a href="#section-9.3" class="auto internal xref">9.3</a>.  <a href="#name-resource-exhaustion" class="internal xref">Resource Exhaustion</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
+            <p id="section-toc.1-1.10.1"><a href="#section-10" class="auto internal xref">10</a>. <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.1">
+                <p id="section-toc.1-1.10.2.1.1"><a href="#section-10.1" class="auto internal xref">10.1</a>.  <a href="#name-setup-parameter-types" class="internal xref">Setup Parameter Types</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.2">
+                <p id="section-toc.1-1.10.2.2.1"><a href="#section-10.2" class="auto internal xref">10.2</a>.  <a href="#name-unidirectional-stream-types" class="internal xref">Unidirectional Stream Types</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.3">
+                <p id="section-toc.1-1.10.2.3.1"><a href="#section-10.3" class="auto internal xref">10.3</a>.  <a href="#name-pseudo-parameter-types-2" class="internal xref">Pseudo-Parameter Types</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.4">
+                <p id="section-toc.1-1.10.2.4.1"><a href="#section-10.4" class="auto internal xref">10.4</a>.  <a href="#name-session-error-codes" class="internal xref">Session Error Codes</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
+            <p id="section-toc.1-1.11.1"><a href="#section-11" class="auto internal xref">11</a>. <a href="#name-references" class="internal xref">References</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.1">
+                <p id="section-toc.1-1.11.2.1.1"><a href="#section-11.1" class="auto internal xref">11.1</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.2">
+                <p id="section-toc.1-1.11.2.2.1"><a href="#section-11.2" class="auto internal xref">11.2</a>.  <a href="#name-informative-references" class="internal xref">Informative References</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12">
+            <p id="section-toc.1-1.12.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13">
+            <p id="section-toc.1-1.13.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-example-encoding" class="internal xref">Example Encoding</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.1">
+                <p id="section-toc.1-1.13.2.1.1"><a href="#appendix-B.1" class="auto internal xref"></a><a href="#name-scenario" class="internal xref">Scenario</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.2">
+                <p id="section-toc.1-1.13.2.2.1"><a href="#appendix-B.2" class="auto internal xref"></a><a href="#name-first-subscribe" class="internal xref">First SUBSCRIBE</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.3">
+                <p id="section-toc.1-1.13.2.3.1"><a href="#appendix-B.3" class="auto internal xref"></a><a href="#name-subsequent-subscribes-to-sa" class="internal xref">Subsequent SUBSCRIBEs to Same Track</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.4">
+                <p id="section-toc.1-1.13.2.4.1"><a href="#appendix-B.4" class="auto internal xref"></a><a href="#name-subscribe-to-different-trac" class="internal xref">SUBSCRIBE to Different Track, Same Namespace</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.5">
+                <p id="section-toc.1-1.13.2.5.1"><a href="#appendix-B.5" class="auto internal xref"></a><a href="#name-total-savings" class="internal xref">Total Savings</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14">
+            <p id="section-toc.1-1.14.1"><a href="#appendix-C" class="auto internal xref"></a><a href="#name-code-point-summary" class="internal xref">Code Point Summary</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14.2.1">
+                <p id="section-toc.1-1.14.2.1.1"><a href="#appendix-C.1" class="auto internal xref"></a><a href="#name-setup-parameters" class="internal xref">Setup Parameters</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14.2.2">
+                <p id="section-toc.1-1.14.2.2.1"><a href="#appendix-C.2" class="auto internal xref"></a><a href="#name-stream-types-2" class="internal xref">Stream Types</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14.2.3">
+                <p id="section-toc.1-1.14.2.3.1"><a href="#appendix-C.3" class="auto internal xref"></a><a href="#name-pseudo-parameter-types-3" class="internal xref">Pseudo-Parameter Types</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14.2.4">
+                <p id="section-toc.1-1.14.2.4.1"><a href="#appendix-C.4" class="auto internal xref"></a><a href="#name-moqpack-message-types" class="internal xref">MOQPACK Message Types</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.15">
+            <p id="section-toc.1-1.15.1"><a href="#appendix-D" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
 </li>
         </ul>
 </nav>
@@ -1177,7 +1423,39 @@ svg :is([fill="white"], [fill^="#fff"]) {
       <h2 id="name-introduction">
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
-<p id="section-1-1">TODO Introduction<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-1">Media over QUIC Transport (MOQT) <span>[<a href="#MOQT" class="cite xref">MOQT</a>]</span> uses message parameters to convey
+optional information in control messages. Some message fields and parameters can
+contain large values that are repeated across many messages within a
+session. The base MOQT specification transmits these parameters in full each
+time they appear, which can result in significant overhead.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">This document defines an extension that uses QPACK <span>[<a href="#QPACK" class="cite xref">QPACK</a>]</span> to compress MOQT
+message parameters. QPACK provides:<a href="#section-1-2" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1-3.1">
+          <p id="section-1-3.1.1">Dynamic table for referencing previously transmitted values<a href="#section-1-3.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-1-3.2">
+          <p id="section-1-3.2.1">Static table with pre-defined common values<a href="#section-1-3.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-1-3.3">
+          <p id="section-1-3.3.1">Stream blocking semantics suitable for QUIC<a href="#section-1-3.3.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+<p id="section-1-4">By treating MOQT parameters as QPACK field lines, this extension enables
+efficient compression of repeated parameter values while maintaining
+compatibility with QPACK's existing infrastructure.<a href="#section-1-4" class="pilcrow">¶</a></p>
+<div id="motivation">
+<section id="section-1.1">
+        <h3 id="name-motivation">
+<a href="#section-1.1" class="section-number selfRef">1.1. </a><a href="#name-motivation" class="section-name selfRef">Motivation</a>
+        </h3>
+<p id="section-1.1-1">Consider a session where a client sends 100 SUBSCRIBE messages, each carrying
+the same 500-byte authorization token. Without compression, this results in
+50,000 bytes of token data. With QPACK compression, the token is transmitted
+once and subsequent references require only a few bytes, reducing total
+overhead to approximately 600 bytes.<a href="#section-1.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
 </section>
 </div>
 <div id="conventions-and-definitions">
@@ -1189,39 +1467,1309 @@ svg :is([fill="white"], [fill^="#fff"]) {
 "<span class="bcp14">MAY</span>", and "<span class="bcp14">OPTIONAL</span>" in this document are to be interpreted as
 described in BCP 14 <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="cite xref">RFC8174</a>]</span> when, and only when, they
 appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶</a></p>
+<p id="section-2-2">The terms "endpoint", "session", "publisher", and "subscriber" are defined in
+<span>[<a href="#MOQT" class="cite xref">MOQT</a>]</span>.<a href="#section-2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="extension-negotiation">
+<section id="section-3">
+      <h2 id="name-extension-negotiation">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-extension-negotiation" class="section-name selfRef">Extension Negotiation</a>
+      </h2>
+<p id="section-3-1">This extension is negotiated during MOQT session establishment using Setup
+Parameters. CLIENT_SETUP and SERVER_SETUP messages always use standard MOQT
+encoding and are never MOQPACK compressed.<a href="#section-3-1" class="pilcrow">¶</a></p>
+<div id="moqtqpackmaxtablecapacity">
+<section id="section-3.1">
+        <h3 id="name-moqt_qpack_max_table_capaci">
+<a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-moqt_qpack_max_table_capaci" class="section-name selfRef">MOQT_QPACK_MAX_TABLE_CAPACITY</a>
+        </h3>
+<p id="section-3.1-1">The MOQT_QPACK_MAX_TABLE_CAPACITY setup parameter (Parameter Type 0x10)
+specifies the maximum size in bytes of the QPACK dynamic table the endpoint
+is willing to maintain for decoding. This corresponds to
+SETTINGS_QPACK_MAX_TABLE_CAPACITY in HTTP/3.<a href="#section-3.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.1-2">The value is encoded as a variable-length integer. The default value is 0.<a href="#section-3.1-2" class="pilcrow">¶</a></p>
+<p id="section-3.1-3">QPACK compression is enabled when both endpoints send this parameter with a
+value greater than 0. If either endpoint omits this parameter or sends a
+value of 0, QPACK compression <span class="bcp14">MUST NOT</span> be used and messages use the standard
+MOQT format.<a href="#section-3.1-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="moqtqpackblockedstreams">
+<section id="section-3.2">
+        <h3 id="name-moqt_qpack_blocked_streams">
+<a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-moqt_qpack_blocked_streams" class="section-name selfRef">MOQT_QPACK_BLOCKED_STREAMS</a>
+        </h3>
+<p id="section-3.2-1">The MOQT_QPACK_BLOCKED_STREAMS setup parameter (Parameter Type 0x11) specifies
+the maximum number of streams that can be blocked waiting for dynamic table
+updates. This corresponds to SETTINGS_QPACK_BLOCKED_STREAMS in HTTP/3.<a href="#section-3.2-1" class="pilcrow">¶</a></p>
+<p id="section-3.2-2">The value is encoded as a variable-length integer. The default value is 0,
+which prevents any stream from being blocked. When set to 0, encoders <span class="bcp14">MUST NOT</span>
+reference dynamic table entries that have not been acknowledged.<a href="#section-3.2-2" class="pilcrow">¶</a></p>
+<p id="section-3.2-3">This parameter is only meaningful when QPACK compression is enabled.<a href="#section-3.2-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="moqtqpackindexsetupauth">
+<section id="section-3.3">
+        <h3 id="name-moqt_qpack_index_setup_auth">
+<a href="#section-3.3" class="section-number selfRef">3.3. </a><a href="#name-moqt_qpack_index_setup_auth" class="section-name selfRef">MOQT_QPACK_INDEX_SETUP_AUTH</a>
+        </h3>
+<p id="section-3.3-1">The MOQT_QPACK_INDEX_SETUP_AUTH setup parameter (Parameter Type 0x12) controls
+whether AUTHORIZATION TOKEN parameters from the Setup messages are implicitly
+inserted into the dynamic table.<a href="#section-3.3-1" class="pilcrow">¶</a></p>
+<p id="section-3.3-2">The value is encoded as a variable-length integer:<a href="#section-3.3-2" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-3.3-3.1">
+            <p id="section-3.3-3.1.1">0: Do not implicitly insert setup auth tokens (default)<a href="#section-3.3-3.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.3-3.2">
+            <p id="section-3.3-3.2.1">1: Implicitly insert setup auth tokens<a href="#section-3.3-3.2.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-3.3-4">When either endpoint omits this parameter or sends 0, implicit insertion does
+not occur and endpoints that wish to reference auth tokens must explicitly
+insert them via the encoder stream.<a href="#section-3.3-4" class="pilcrow">¶</a></p>
+<p id="section-3.3-5">This allows endpoints to authenticate the connection via setup auth tokens
+while still using Never-Indexed Literals for subsequent auth token references
+if desired.<a href="#section-3.3-5" class="pilcrow">¶</a></p>
+<div id="implicit-dynamic-table-seeding">
+<section id="section-3.3.1">
+          <h4 id="name-implicit-dynamic-table-seed">
+<a href="#section-3.3.1" class="section-number selfRef">3.3.1. </a><a href="#name-implicit-dynamic-table-seed" class="section-name selfRef">Implicit Dynamic Table Seeding</a>
+          </h4>
+<p id="section-3.3.1-1">When both endpoints send MOQT_QPACK_INDEX_SETUP_AUTH with value 1, any
+AUTHORIZATION TOKEN parameters from the setup messages are implicitly inserted
+into the dynamic table without requiring encoder stream instructions.<a href="#section-3.3.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.3.1-2">The implicit insertion order is:<a href="#section-3.3.1-2" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-3.3.1-3">
+<li id="section-3.3.1-3.1">
+              <p id="section-3.3.1-3.1.1">Tokens from CLIENT_SETUP, in the order they appeared, are inserted into
+the client's encoder dynamic table (indices 0, 1, 2, ...)<a href="#section-3.3.1-3.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li id="section-3.3.1-3.2">
+              <p id="section-3.3.1-3.2.1">Tokens from SERVER_SETUP, in the order they appeared, are inserted into
+the server's encoder dynamic table (indices 0, 1, 2, ...)<a href="#section-3.3.1-3.2.1" class="pilcrow">¶</a></p>
+</li>
+          </ol>
+<p id="section-3.3.1-4">Each endpoint's decoder knows the peer's setup tokens and can decode
+references to these implicit entries.<a href="#section-3.3.1-4" class="pilcrow">¶</a></p>
+<p id="section-3.3.1-5">This allows the client to immediately reference its setup auth token in
+the first SUBSCRIBE message using a dynamic table reference, without any
+encoder stream round-trip. For example, to reference just the auth token
+(assuming namespace and track name are sent separately):<a href="#section-3.3.1-5" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-3.3.1-6">
+<pre>
+CLIENT_SETUP:
+  MOQT_QPACK_INDEX_SETUP_AUTH: 1
+  AUTHORIZATION_TOKEN: Token Type 1, "eyJhbG..."
+
+[MOQPACK negotiated, both endpoints sent INDEX_SETUP_AUTH=1]
+
+Dynamic table (implicit):
+  index 0: AUTH_TOKEN
+
+SUBSCRIBE Compressed Block (partial):
+  Indexed Field Line (Dynamic, relative index 0)  // References setup token
+</pre><a href="#section-3.3.1-6" class="pilcrow">¶</a>
+</div>
+<p id="section-3.3.1-7">The implicit entries count against the MOQT_QPACK_MAX_TABLE_CAPACITY limit.
+If the implicit entries would exceed the peer's advertised capacity, the
+excess entries (in reverse order) are not inserted and cannot be referenced.<a href="#section-3.3.1-7" class="pilcrow">¶</a></p>
+<p id="section-3.3.1-8">Encoder stream insertions after setup use indices starting after the
+implicit entries. For example, if CLIENT_SETUP contained 2 auth tokens,
+the first explicit insertion would be at index 2.<a href="#section-3.3.1-8" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="qpack-streams">
+<section id="section-4">
+      <h2 id="name-qpack-streams">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-qpack-streams" class="section-name selfRef">QPACK Streams</a>
+      </h2>
+<p id="section-4-1">When QPACK compression is negotiated, each endpoint opens two unidirectional
+streams for QPACK signaling.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<div id="stream-types">
+<section id="section-4.1">
+        <h3 id="name-stream-types">
+<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-stream-types" class="section-name selfRef">Stream Types</a>
+        </h3>
+<p id="section-4.1-1">This extension defines two new MOQT unidirectional stream types:<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-4.1-2">
+          <dt id="section-4.1-2.1">QPACK_ENCODER_STREAM (0x1f107a60):</dt>
+          <dd style="margin-left: 1.5em" id="section-4.1-2.2">
+            <p id="section-4.1-2.2.1">Carries QPACK encoder instructions from the endpoint that opens the stream.
+The format and semantics are defined in Section 4.3.1 of <span>[<a href="#QPACK" class="cite xref">QPACK</a>]</span>.<a href="#section-4.1-2.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-4.1-2.3">QPACK_DECODER_STREAM (0x1f107a61):</dt>
+          <dd style="margin-left: 1.5em" id="section-4.1-2.4">
+            <p id="section-4.1-2.4.1">Carries QPACK decoder instructions from the endpoint that opens the stream.
+The format and semantics are defined in Section 4.4.1 of <span>[<a href="#QPACK" class="cite xref">QPACK</a>]</span>.<a href="#section-4.1-2.4.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="stream-initialization">
+<section id="section-4.2">
+        <h3 id="name-stream-initialization">
+<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-stream-initialization" class="section-name selfRef">Stream Initialization</a>
+        </h3>
+<p id="section-4.2-1">Each endpoint <span class="bcp14">MUST</span> open exactly one QPACK encoder stream and one QPACK decoder
+stream for QPACK use. These streams <span class="bcp14">MUST</span> be opened before sending any message
+with a Compressed Block.<a href="#section-4.2-1" class="pilcrow">¶</a></p>
+<p id="section-4.2-2">An endpoint <span class="bcp14">MAY</span> open these streams immediately after sending its Setup message
+if it included MOQT_QPACK_MAX_TABLE_CAPACITY with a non-zero value. If a
+receiving endpoint does not enable QPACK (omits the parameter or sends value 0),
+it <span class="bcp14">MAY</span> send STOP_SENDING on these streams; this is not an error and the streams
+<span class="bcp14">SHOULD</span> be reset.<a href="#section-4.2-2" class="pilcrow">¶</a></p>
+<p id="section-4.2-3">Note that implicitly-inserted dynamic table entries from Setup auth tokens
+(see <a href="#implicit-dynamic-table-seeding" class="auto internal xref">Section 3.3.1</a>) do not require encoder stream
+instructions. A Compressed Block <span class="bcp14">MAY</span> reference these implicit entries even
+if no encoder stream instructions have been sent.<a href="#section-4.2-3" class="pilcrow">¶</a></p>
+<p id="section-4.2-4">If an endpoint receives a Compressed Block that references a dynamic table
+entry beyond the implicit entries before receiving any encoder stream data,
+it <span class="bcp14">MUST</span> buffer the message until the required encoder instructions arrive
+or close the session with PROTOCOL_VIOLATION if buffering limits are exceeded.<a href="#section-4.2-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="stream-lifetime">
+<section id="section-4.3">
+        <h3 id="name-stream-lifetime">
+<a href="#section-4.3" class="section-number selfRef">4.3. </a><a href="#name-stream-lifetime" class="section-name selfRef">Stream Lifetime</a>
+        </h3>
+<p id="section-4.3-1">QPACK encoder and decoder streams <span class="bcp14">MUST</span> remain open for the duration of the MOQT
+session. If either stream is closed after QPACK is negotiated, the endpoint <span class="bcp14">MUST</span>
+close the MOQT session with PROTOCOL_VIOLATION.<a href="#section-4.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="compressed-message-formats">
+<section id="section-5">
+      <h2 id="name-compressed-message-formats">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-compressed-message-formats" class="section-name selfRef">Compressed Message Formats</a>
+      </h2>
+<div id="moqpack-flag-bit">
+<section id="section-5.1">
+        <h3 id="name-moqpack-flag-bit">
+<a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-moqpack-flag-bit" class="section-name selfRef">MOQPACK Flag Bit</a>
+        </h3>
+<p id="section-5.1-1">This extension uses a flag bit in the message type to indicate if QPACK is
+used. Bit 6 (0x40) of the message type indicates MOQPACK format:<a href="#section-5.1-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5.1-2.1">
+            <p id="section-5.1-2.1.1">Type &amp; 0x40 == 0: Standard MOQT format<a href="#section-5.1-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.1-2.2">
+            <p id="section-5.1-2.2.1">Type &amp; 0x40 == 0x40: MOQPACK format<a href="#section-5.1-2.2.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-5.1-3">For example:
+- SUBSCRIBE standard = 0x03
+- SUBSCRIBE MOQPACK = 0x43<a href="#section-5.1-3" class="pilcrow">¶</a></p>
+<p id="section-5.1-4">When MOQPACK is negotiated, endpoints <span class="bcp14">MUST</span> accept both standard and MOQPACK
+formats for all applicable messages. An endpoint <span class="bcp14">MAY</span> send either format, but
+<span class="bcp14">SHOULD</span> prefer MOQPACK format to benefit from compression.<a href="#section-5.1-4" class="pilcrow">¶</a></p>
+<p id="section-5.1-5">When MOQPACK is NOT negotiated, endpoints <span class="bcp14">MUST NOT</span> send MOQPACK format messages
+and <span class="bcp14">MUST</span> close the session with PROTOCOL_VIOLATION if they receive one.<a href="#section-5.1-5" class="pilcrow">¶</a></p>
+<p id="section-5.1-6">In MOQPACK format, Track Namespace, Track Name, and Parameters are moved into a
+QPACK Compressed Block. Other message-specific fields including Properties
+remain unchanged.<a href="#section-5.1-6" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="pseudo-parameter-types">
+<section id="section-5.2">
+        <h3 id="name-pseudo-parameter-types">
+<a href="#section-5.2" class="section-number selfRef">5.2. </a><a href="#name-pseudo-parameter-types" class="section-name selfRef">Pseudo-Parameter Types</a>
+        </h3>
+<p id="section-5.2-1">The following pseudo-parameter types are reserved for encoding namespace and
+track name fields in the Compressed Block:<a href="#section-5.2-1" class="pilcrow">¶</a></p>
+<table class="center" id="table-1">
+          <caption><a href="#table-1" class="selfRef">Table 1</a></caption>
+<thead>
+            <tr>
+              <th class="text-left" rowspan="1" colspan="1">Type</th>
+              <th class="text-left" rowspan="1" colspan="1">Name</th>
+              <th class="text-left" rowspan="1" colspan="1">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x00</td>
+              <td class="text-left" rowspan="1" colspan="1">TRACK_NAMESPACE_ELEMENT</td>
+              <td class="text-left" rowspan="1" colspan="1">Single element of a namespace tuple</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x01</td>
+              <td class="text-left" rowspan="1" colspan="1">TRACK_NAMESPACE_SET</td>
+              <td class="text-left" rowspan="1" colspan="1">Full serialized namespace tuple</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x02</td>
+              <td class="text-left" rowspan="1" colspan="1">TRACK_NAME</td>
+              <td class="text-left" rowspan="1" colspan="1">Track Name</td>
+            </tr>
+          </tbody>
+        </table>
+<p id="section-5.2-3">These pseudo-types use the same encoding as regular parameters: Literal with
+Static Name Reference for new values, or Indexed with Dynamic Table for
+previously-inserted values.<a href="#section-5.2-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="namespace-reconstruction">
+<section id="section-5.3">
+        <h3 id="name-namespace-reconstruction">
+<a href="#section-5.3" class="section-number selfRef">5.3. </a><a href="#name-namespace-reconstruction" class="section-name selfRef">Namespace Reconstruction</a>
+        </h3>
+<p id="section-5.3-1">A Track Namespace, Track Namespace Prefix or Track Namespace Suffix is
+reconstructed by assembling consecutive TRACK_NAMESPACE_ELEMENT and
+TRACK_NAMESPACE_SET field lines, which <span class="bcp14">MUST</span> appear first in the Compressed Block
+before TRACK_NAME or any parameters.<a href="#section-5.3-1" class="pilcrow">¶</a></p>
+<p id="section-5.3-2">TRACK_NAMESPACE_ELEMENT adds a single element to the namespace tuple.
+TRACK_NAMESPACE_SET appends all elements from a serialized tuple. These
+can be intermixed and appear in any combination. For example:<a href="#section-5.3-2" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.3-3">
+<pre>
+Namespace ("conference", "room1", "audio"):
+
+Option A - All elements:
+  TRACK_NAMESPACE_ELEMENT: "conference"
+  TRACK_NAMESPACE_ELEMENT: "room1"
+  TRACK_NAMESPACE_ELEMENT: "audio"
+
+Option B - Full set:
+  TRACK_NAMESPACE_SET: ("conference", "room1", "audio")
+
+Option C - Mixed:
+  TRACK_NAMESPACE_ELEMENT: "conference"
+  TRACK_NAMESPACE_SET: ("room1", "audio")
+</pre><a href="#section-5.3-3" class="pilcrow">¶</a>
+</div>
+<p id="section-5.3-4">This allows encoders to maximize compression by inserting commonly-reused
+elements or partial tuples into the dynamic table.<a href="#section-5.3-4" class="pilcrow">¶</a></p>
+<p id="section-5.3-5">The message type determines the semantics of the assembled namespace:<a href="#section-5.3-5" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5.3-6.1">
+            <p id="section-5.3-6.1.1">SUBSCRIBE, PUBLISH, FETCH, TRACK_STATUS, PUBLISH_NAMESPACE: Full namespace<a href="#section-5.3-6.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.3-6.2">
+            <p id="section-5.3-6.2.1">SUBSCRIBE_NAMESPACE: Namespace prefix<a href="#section-5.3-6.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.3-6.3">
+            <p id="section-5.3-6.3.1">NAMESPACE, NAMESPACE_DONE: Namespace suffix<a href="#section-5.3-6.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="field-ordering">
+<section id="section-5.4">
+        <h3 id="name-field-ordering">
+<a href="#section-5.4" class="section-number selfRef">5.4. </a><a href="#name-field-ordering" class="section-name selfRef">Field Ordering</a>
+        </h3>
+<p id="section-5.4-1">Namespace elements (TRACK_NAMESPACE_ELEMENT and TRACK_NAMESPACE_SET) <span class="bcp14">MUST</span>
+appear first in the Compressed Block, followed by TRACK_NAME (if present),
+followed by parameters in increasing order of parameter type.<a href="#section-5.4-1" class="pilcrow">¶</a></p>
+<p id="section-5.4-2">Within the namespace elements section, entries appear in the order they
+contribute to the namespace tuple and are not required to be in increasing
+order of type. TRACK_NAMESPACE_ELEMENT (0x00) and TRACK_NAMESPACE_SET (0x01)
+<span class="bcp14">MAY</span> be intermixed.<a href="#section-5.4-2" class="pilcrow">¶</a></p>
+<p id="section-5.4-3">Parameters (types 0x03 and above) <span class="bcp14">MUST</span> appear in increasing order of their
+parameter type. If parameters appear out of order, the receiver <span class="bcp14">MUST</span> close
+the session with PROTOCOL_VIOLATION.<a href="#section-5.4-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="required-fields">
+<section id="section-5.5">
+        <h3 id="name-required-fields">
+<a href="#section-5.5" class="section-number selfRef">5.5. </a><a href="#name-required-fields" class="section-name selfRef">Required Fields</a>
+        </h3>
+<p id="section-5.5-1">When decoding a Compressed Block, the receiver <span class="bcp14">MUST</span> verify that all required
+fields are present:<a href="#section-5.5-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5.5-2.1">
+            <p id="section-5.5-2.1.1">SUBSCRIBE, PUBLISH, TRACK_STATUS, Standalone FETCH: At least one namespace
+element (TRACK_NAMESPACE_ELEMENT or TRACK_NAMESPACE_SET) and TRACK_NAME<a href="#section-5.5-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.5-2.2">
+            <p id="section-5.5-2.2.1">SUBSCRIBE_NAMESPACE, PUBLISH_NAMESPACE, NAMESPACE, NAMESPACE_DONE: At least
+one namespace element<a href="#section-5.5-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.5-2.3">
+            <p id="section-5.5-2.3.1">Joining FETCH, parameter-only messages: No required pseudo-parameters<a href="#section-5.5-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-5.5-3">An empty namespace (zero elements) is valid only if explicitly allowed by the
+message semantics.<a href="#section-5.5-3" class="pilcrow">¶</a></p>
+<p id="section-5.5-4">If a required field is missing, the receiver <span class="bcp14">MUST</span> close the session with
+PROTOCOL_VIOLATION.<a href="#section-5.5-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="moqpack-message-formats">
+<section id="section-5.6">
+        <h3 id="name-moqpack-message-formats">
+<a href="#section-5.6" class="section-number selfRef">5.6. </a><a href="#name-moqpack-message-formats" class="section-name selfRef">MOQPACK Message Formats</a>
+        </h3>
+<div id="subscribe">
+<section id="section-5.6.1">
+          <h4 id="name-subscribe">
+<a href="#section-5.6.1" class="section-number selfRef">5.6.1. </a><a href="#name-subscribe" class="section-name selfRef">SUBSCRIBE</a>
+          </h4>
+<div class="alignLeft art-text artwork" id="section-5.6.1-1">
+<pre>
+SUBSCRIBE Message (MOQPACK) {
+  Type (vi64) = 0x43,
+  Length (16),
+  Request ID (vi64),
+  Track Alias (vi64),
+  Compressed Block Length (vi64),
+  Compressed Block (..)
+}
+</pre><a href="#section-5.6.1-1" class="pilcrow">¶</a>
+</div>
+<p id="section-5.6.1-2">The Compressed Block contains namespace elements (TRACK_NAMESPACE_ELEMENT and/or
+TRACK_NAMESPACE_SET), TRACK_NAME (0x02), and any parameters
+(AUTHORIZATION_TOKEN, SUBSCRIBER_PRIORITY, etc.).<a href="#section-5.6.1-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="publish">
+<section id="section-5.6.2">
+          <h4 id="name-publish">
+<a href="#section-5.6.2" class="section-number selfRef">5.6.2. </a><a href="#name-publish" class="section-name selfRef">PUBLISH</a>
+          </h4>
+<div class="alignLeft art-text artwork" id="section-5.6.2-1">
+<pre>
+PUBLISH Message (MOQPACK) {
+  Type (vi64) = 0x5D,
+  Length (16),
+  Request ID (vi64),
+  Track Alias (vi64),
+  Compressed Block Length (vi64),
+  Compressed Block (..),
+  Track Extensions (..)
+}
+</pre><a href="#section-5.6.2-1" class="pilcrow">¶</a>
+</div>
+<p id="section-5.6.2-2">The Compressed Block contains namespace elements, TRACK_NAME, and any
+parameters.  Track Extensions remain outside the compressed block and use
+standard MOQT encoding, including IMMUTABLE_EXTENSIONS which are not QPACK
+compressed.<a href="#section-5.6.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="fetch">
+<section id="section-5.6.3">
+          <h4 id="name-fetch">
+<a href="#section-5.6.3" class="section-number selfRef">5.6.3. </a><a href="#name-fetch" class="section-name selfRef">FETCH</a>
+          </h4>
+<div class="alignLeft art-text artwork" id="section-5.6.3-1">
+<pre>
+Standalone Fetch (MOQPACK) {
+  Start Location (Location),
+  End Location (Location),
+  Compressed Block Length (vi64),
+  Compressed Block (..)
+}
+
+Joining Fetch (MOQPACK) {
+  Joining Request ID (vi64),
+  Join Type (vi64),
+  Joining Start (vi64),
+  Compressed Block Length (vi64),
+  Compressed Block (..)
+}
+
+FETCH Message (MOQPACK) {
+  Type (vi64) = 0x56,
+  Length (16),
+  Request ID (vi64),
+  Fetch Type (vi64),
+  [Standalone (Standalone Fetch QPACK),]
+  [Joining (Joining Fetch QPACK),]
+}
+</pre><a href="#section-5.6.3-1" class="pilcrow">¶</a>
+</div>
+<p id="section-5.6.3-2">For Standalone Fetch, the Compressed Block contains namespace elements,
+TRACK_NAME, and parameters. For Joining Fetch, the Compressed Block contains
+only parameters (the track is inherited from the joined subscription).<a href="#section-5.6.3-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="subscribenamespace">
+<section id="section-5.6.4">
+          <h4 id="name-subscribe_namespace">
+<a href="#section-5.6.4" class="section-number selfRef">5.6.4. </a><a href="#name-subscribe_namespace" class="section-name selfRef">SUBSCRIBE_NAMESPACE</a>
+          </h4>
+<div class="alignLeft art-text artwork" id="section-5.6.4-1">
+<pre>
+SUBSCRIBE_NAMESPACE Message (MOQPACK) {
+  Type (vi64) = 0x51,
+  Length (16),
+  Request ID (vi64),
+  Subscribe Options (vi64),
+  Compressed Block Length (vi64),
+  Compressed Block (..)
+}
+</pre><a href="#section-5.6.4-1" class="pilcrow">¶</a>
+</div>
+<p id="section-5.6.4-2">The Compressed Block contains namespace prefix elements and any parameters.<a href="#section-5.6.4-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="publishnamespace">
+<section id="section-5.6.5">
+          <h4 id="name-publish_namespace">
+<a href="#section-5.6.5" class="section-number selfRef">5.6.5. </a><a href="#name-publish_namespace" class="section-name selfRef">PUBLISH_NAMESPACE</a>
+          </h4>
+<div class="alignLeft art-text artwork" id="section-5.6.5-1">
+<pre>
+PUBLISH_NAMESPACE Message (MOQPACK) {
+  Type (vi64) = 0x46,
+  Length (16),
+  Request ID (vi64),
+  Compressed Block Length (vi64),
+  Compressed Block (..)
+}
+</pre><a href="#section-5.6.5-1" class="pilcrow">¶</a>
+</div>
+<p id="section-5.6.5-2">The Compressed Block contains namespace elements and any parameters.<a href="#section-5.6.5-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="namespace">
+<section id="section-5.6.6">
+          <h4 id="name-namespace">
+<a href="#section-5.6.6" class="section-number selfRef">5.6.6. </a><a href="#name-namespace" class="section-name selfRef">NAMESPACE</a>
+          </h4>
+<div class="alignLeft art-text artwork" id="section-5.6.6-1">
+<pre>
+NAMESPACE Message (MOQPACK) {
+  Type (vi64) = 0x48,
+  Length (16),
+  Compressed Block Length (vi64),
+  Compressed Block (..)
+}
+</pre><a href="#section-5.6.6-1" class="pilcrow">¶</a>
+</div>
+<p id="section-5.6.6-2">The Compressed Block contains namespace suffix elements. This message has
+no parameters.<a href="#section-5.6.6-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="namespacedone">
+<section id="section-5.6.7">
+          <h4 id="name-namespace_done">
+<a href="#section-5.6.7" class="section-number selfRef">5.6.7. </a><a href="#name-namespace_done" class="section-name selfRef">NAMESPACE_DONE</a>
+          </h4>
+<div class="alignLeft art-text artwork" id="section-5.6.7-1">
+<pre>
+NAMESPACE_DONE Message (MOQPACK) {
+  Type (vi64) = 0x4E,
+  Length (16),
+  Compressed Block Length (vi64),
+  Compressed Block (..)
+}
+</pre><a href="#section-5.6.7-1" class="pilcrow">¶</a>
+</div>
+<p id="section-5.6.7-2">The Compressed Block contains namespace suffix elements. This message has
+no parameters.<a href="#section-5.6.7-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="trackstatus">
+<section id="section-5.6.8">
+          <h4 id="name-track_status">
+<a href="#section-5.6.8" class="section-number selfRef">5.6.8. </a><a href="#name-track_status" class="section-name selfRef">TRACK_STATUS</a>
+          </h4>
+<p id="section-5.6.8-1">TRACK_STATUS uses the same format as SUBSCRIBE but with type 0x4D.
+The Compressed Block contains namespace elements, TRACK_NAME, and any applicable
+parameters.<a href="#section-5.6.8-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="parameter-only-messages">
+<section id="section-5.6.9">
+          <h4 id="name-parameter-only-messages">
+<a href="#section-5.6.9" class="section-number selfRef">5.6.9. </a><a href="#name-parameter-only-messages" class="section-name selfRef">Parameter-Only Messages</a>
+          </h4>
+<p id="section-5.6.9-1">The following messages have parameters but no namespace or track name fields.
+When MOQPACK is negotiated, these messages <span class="bcp14">MAY</span> use MOQPACK format with the
+0x40 flag bit set. The MOQPACK format replaces the standard Parameters field
+with a Compressed Block:<a href="#section-5.6.9-1" class="pilcrow">¶</a></p>
+<table class="center" id="table-2">
+            <caption><a href="#table-2" class="selfRef">Table 2</a></caption>
+<thead>
+              <tr>
+                <th class="text-left" rowspan="1" colspan="1">Standard Type</th>
+                <th class="text-left" rowspan="1" colspan="1">MOQPACK Type</th>
+                <th class="text-left" rowspan="1" colspan="1">Message</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">0x02</td>
+                <td class="text-left" rowspan="1" colspan="1">0x42</td>
+                <td class="text-left" rowspan="1" colspan="1">REQUEST_UPDATE</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">0x04</td>
+                <td class="text-left" rowspan="1" colspan="1">0x44</td>
+                <td class="text-left" rowspan="1" colspan="1">SUBSCRIBE_OK</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">0x05</td>
+                <td class="text-left" rowspan="1" colspan="1">0x45</td>
+                <td class="text-left" rowspan="1" colspan="1">REQUEST_ERROR</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">0x07</td>
+                <td class="text-left" rowspan="1" colspan="1">0x47</td>
+                <td class="text-left" rowspan="1" colspan="1">REQUEST_OK</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">0x18</td>
+                <td class="text-left" rowspan="1" colspan="1">0x58</td>
+                <td class="text-left" rowspan="1" colspan="1">FETCH_OK</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">0x1E</td>
+                <td class="text-left" rowspan="1" colspan="1">0x5E</td>
+                <td class="text-left" rowspan="1" colspan="1">PUBLISH_OK</td>
+              </tr>
+            </tbody>
+          </table>
+<div class="alignLeft art-text artwork" id="section-5.6.9-3">
+<pre>
+Parameter-Only Message (MOQPACK) {
+  Type (vi64) = &lt;standard type&gt; | 0x40,
+  Length (16),
+  [Message-specific fields...],
+  Compressed Block Length (vi64),
+  Compressed Block (..)
+}
+</pre><a href="#section-5.6.9-3" class="pilcrow">¶</a>
+</div>
+<p id="section-5.6.9-4">The Compressed Block contains only parameters (no pseudo-parameter types).
+Message-specific fields (Request ID, error codes, etc.) remain unchanged.<a href="#section-5.6.9-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="qpack-encoding">
+<section id="section-6">
+      <h2 id="name-qpack-encoding">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-qpack-encoding" class="section-name selfRef">QPACK Encoding</a>
+      </h2>
+<p id="section-6-1">This extension uses QPACK's wire encoding formats exactly as specified in
+<span>[<a href="#QPACK" class="cite xref">QPACK</a>]</span>. The only difference is the interpretation of static table
+references: instead of indexing into the HTTP static table of string
+name-value pairs, the static table index IS the MOQT parameter type.<a href="#section-6-1" class="pilcrow">¶</a></p>
+<p id="section-6-2">This allows existing QPACK encoder/decoder implementations to be reused
+with minimal modification.<a href="#section-6-2" class="pilcrow">¶</a></p>
+<div id="compressed-block-format">
+<section id="section-6.1">
+        <h3 id="name-compressed-block-format">
+<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-compressed-block-format" class="section-name selfRef">Compressed Block Format</a>
+        </h3>
+<p id="section-6.1-1">Each Compressed Block begins with the standard QPACK encoded field section
+prefix as defined in Section 4.5.1 of <span>[<a href="#QPACK" class="cite xref">QPACK</a>]</span>:<a href="#section-6.1-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-6.1-2">
+<pre>
+Compressed Block {
+  Required Insert Count (8+),
+  Sign and Delta Base (8+),
+  Encoded Field Lines (..)
+}
+</pre><a href="#section-6.1-2" class="pilcrow">¶</a>
+</div>
+<span class="break"></span><dl class="dlParallel" id="section-6.1-3">
+          <dt id="section-6.1-3.1">Required Insert Count:</dt>
+          <dd style="margin-left: 1.5em" id="section-6.1-3.2">
+            <p id="section-6.1-3.2.1">Encoded as specified in Section 4.5.1.1 of <span>[<a href="#QPACK" class="cite xref">QPACK</a>]</span>. Indicates the
+minimum dynamic table state needed to decode this block. A value of 0
+means the block has no dynamic table references.<a href="#section-6.1-3.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-6.1-3.3">Base:</dt>
+          <dd style="margin-left: 1.5em" id="section-6.1-3.4">
+            <p id="section-6.1-3.4.1">Encoded as a sign bit and Delta Base as specified in Section 4.5.1.2
+of <span>[<a href="#QPACK" class="cite xref">QPACK</a>]</span>. Used to resolve relative indices in field line
+representations.<a href="#section-6.1-3.4.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="indexing">
+<section id="section-6.2">
+        <h3 id="name-indexing">
+<a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-indexing" class="section-name selfRef">Indexing</a>
+        </h3>
+<p id="section-6.2-1">Dynamic table references in field lines use relative indexing as specified
+in <span>[<a href="#QPACK" class="cite xref">QPACK</a>]</span> Section 3.2.5. A relative index of 0 refers to the entry with
+absolute index equal to Base - 1. Encoders and decoders <span class="bcp14">MUST</span> use relative
+indices, not absolute indices, in Compressed Blocks.<a href="#section-6.2-1" class="pilcrow">¶</a></p>
+<p id="section-6.2-2">Post-Base indexing (Section 3.2.6 of <span>[<a href="#QPACK" class="cite xref">QPACK</a>]</span>) <span class="bcp14">MAY</span> be used for entries
+inserted after the Base. This enables single-pass encoding where the encoder
+inserts entries while encoding a field section and references them using
+Post-Base indices.<a href="#section-6.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="moqt-static-table-semantics">
+<section id="section-6.3">
+        <h3 id="name-moqt-static-table-semantics">
+<a href="#section-6.3" class="section-number selfRef">6.3. </a><a href="#name-moqt-static-table-semantics" class="section-name selfRef">MOQT Static Table Semantics</a>
+        </h3>
+<p id="section-6.3-1">In standard QPACK, a static table index retrieves a predefined (name, value)
+pair. In this extension, the static table conceptually contains entries
+where the "name" is the parameter type integer and there is no predefined
+value.<a href="#section-6.3-1" class="pilcrow">¶</a></p>
+<p id="section-6.3-2">The static table index equals the MOQT parameter type:<a href="#section-6.3-2" class="pilcrow">¶</a></p>
+<p id="section-6.3-3">For example:
+* Static index 0x02 represents DELIVERY_TIMEOUT
+* Static index 0x03 represents AUTHORIZATION_TOKEN
+* Static index 0x20 represents SUBSCRIBER_PRIORITY<a href="#section-6.3-3" class="pilcrow">¶</a></p>
+<p id="section-6.3-4">This means any valid MOQT parameter type can be referenced by static index
+without requiring pre-registration in a table.<a href="#section-6.3-4" class="pilcrow">¶</a></p>
+<div id="field-line-interpretation">
+<section id="section-6.3.1">
+          <h4 id="name-field-line-interpretation">
+<a href="#section-6.3.1" class="section-number selfRef">6.3.1. </a><a href="#name-field-line-interpretation" class="section-name selfRef">Field Line Interpretation</a>
+          </h4>
+<p id="section-6.3.1-1">In QPACK field line encodings, the T bit selects between static table (T=1)
+and dynamic table (T=0). Since MOQT parameter types are integers that map
+directly to static table indices, the following encodings are used:<a href="#section-6.3.1-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-6.3.1-2">
+            <dt id="section-6.3.1-2.1">Literal Field Line With Static Name Reference (T=1):</dt>
+            <dd style="margin-left: 1.5em" id="section-6.3.1-2.2">
+              <p id="section-6.3.1-2.2.1">The Name Index is the MOQT parameter type. The Value field contains the
+parameter value. Use this to send a parameter value.<a href="#section-6.3.1-2.2.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-6.3.1-2.3">Indexed Field Line with Dynamic Table (T=0):</dt>
+            <dd style="margin-left: 1.5em" id="section-6.3.1-2.4">
+              <p id="section-6.3.1-2.4.1">References the dynamic table using a relative index. The retrieved entry
+contains a complete MOQT parameter (type and value).<a href="#section-6.3.1-2.4.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-6.3.1-2.5">Indexed Field Line with Post-Base Index:</dt>
+            <dd style="margin-left: 1.5em" id="section-6.3.1-2.6">
+              <p id="section-6.3.1-2.6.1">References a dynamic table entry inserted after the Base. Used for
+single-pass encoding. See <span>[<a href="#QPACK" class="cite xref">QPACK</a>]</span> Section 4.5.3.<a href="#section-6.3.1-2.6.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+</dl>
+<p id="section-6.3.1-3">The following QPACK field line encodings are prohibited:<a href="#section-6.3.1-3" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-6.3.1-4">
+            <dt id="section-6.3.1-4.1">Indexed Field Line with Static Table (T=1):</dt>
+            <dd style="margin-left: 1.5em" id="section-6.3.1-4.2">
+              <p id="section-6.3.1-4.2.1">PROHIBITED. The MOQT static table has no predefined values.<a href="#section-6.3.1-4.2.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-6.3.1-4.3">Literal Field Line With Dynamic Name Reference (T=0):</dt>
+            <dd style="margin-left: 1.5em" id="section-6.3.1-4.4">
+              <p id="section-6.3.1-4.4.1">PROHIBITED. Parameter types are always known integers; there is no need
+to reference the dynamic table for a parameter type.<a href="#section-6.3.1-4.4.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-6.3.1-4.5">Literal Field Line with Post-Base Name Reference:</dt>
+            <dd style="margin-left: 1.5em" id="section-6.3.1-4.6">
+              <p id="section-6.3.1-4.6.1">PROHIBITED. Parameter types are always known integers; there is no need
+to reference the dynamic table for a parameter type.<a href="#section-6.3.1-4.6.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-6.3.1-4.7">Literal Field Line With Literal Name:</dt>
+            <dd style="margin-left: 1.5em" id="section-6.3.1-4.8">
+              <p id="section-6.3.1-4.8.1">PROHIBITED. Parameter types are integers, never string literals.<a href="#section-6.3.1-4.8.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-6.3.1-4.9">Huffman-encoded string literals (H=1):</dt>
+            <dd style="margin-left: 1.5em" id="section-6.3.1-4.10">
+              <p id="section-6.3.1-4.10.1">PROHIBITED. The CPU cost outweighs the minimal space savings for typical
+MOQT values. Encoders <span class="bcp14">MUST</span> set the H bit to 0 for all string literals.<a href="#section-6.3.1-4.10.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+</dl>
+<p id="section-6.3.1-5">Receivers <span class="bcp14">MUST</span> treat prohibited encodings as a PROTOCOL_VIOLATION.<a href="#section-6.3.1-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="dynamic-table">
+<section id="section-6.4">
+        <h3 id="name-dynamic-table">
+<a href="#section-6.4" class="section-number selfRef">6.4. </a><a href="#name-dynamic-table" class="section-name selfRef">Dynamic Table</a>
+        </h3>
+<p id="section-6.4-1">Dynamic table entries store complete MOQT parameters (type and value).
+The entry size calculation follows <span>[<a href="#QPACK" class="cite xref">QPACK</a>]</span> Section 3.2.1, using a fixed
+name size of 4 bytes for the parameter type regardless of its encoded length.<a href="#section-6.4-1" class="pilcrow">¶</a></p>
+<div id="encoder-stream-instructions">
+<section id="section-6.4.1">
+          <h4 id="name-encoder-stream-instructions">
+<a href="#section-6.4.1" class="section-number selfRef">6.4.1. </a><a href="#name-encoder-stream-instructions" class="section-name selfRef">Encoder Stream Instructions</a>
+          </h4>
+<span class="break"></span><dl class="dlParallel" id="section-6.4.1-1">
+            <dt id="section-6.4.1-1.1">Set Dynamic Table Capacity:</dt>
+            <dd style="margin-left: 1.5em" id="section-6.4.1-1.2">
+              <p id="section-6.4.1-1.2.1">Sets the dynamic table capacity up to the peer's
+MOQT_QPACK_MAX_TABLE_CAPACITY. Encoders <span class="bcp14">MAY</span> reduce capacity dynamically.
+See <span>[<a href="#QPACK" class="cite xref">QPACK</a>]</span> Section 4.3.1.<a href="#section-6.4.1-1.2.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-6.4.1-1.3">Insert With Static Name Reference (T=1):</dt>
+            <dd style="margin-left: 1.5em" id="section-6.4.1-1.4">
+              <p id="section-6.4.1-1.4.1">The Name Index is the MOQT parameter type. Inserts a new dynamic table
+entry with that parameter type and the provided value.<a href="#section-6.4.1-1.4.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-6.4.1-1.5">Duplicate:</dt>
+            <dd style="margin-left: 1.5em" id="section-6.4.1-1.6">
+              <p id="section-6.4.1-1.6.1">Duplicates an existing dynamic table entry at a new index. Useful when
+an entry is near eviction but still frequently referenced. See <span>[<a href="#QPACK" class="cite xref">QPACK</a>]</span>
+Section 4.3.4.<a href="#section-6.4.1-1.6.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-6.4.1-1.7">Insert With Dynamic Name Reference (T=0):</dt>
+            <dd style="margin-left: 1.5em" id="section-6.4.1-1.8">
+              <p id="section-6.4.1-1.8.1">PROHIBITED. Parameter types are always known integers.<a href="#section-6.4.1-1.8.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-6.4.1-1.9">Insert With Literal Name:</dt>
+            <dd style="margin-left: 1.5em" id="section-6.4.1-1.10">
+              <p id="section-6.4.1-1.10.1">PROHIBITED. Parameter types are integers, never strings.<a href="#section-6.4.1-1.10.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+</dl>
+<p id="section-6.4.1-2">Receivers <span class="bcp14">MUST</span> close the session with PROTOCOL_VIOLATION if a prohibited
+encoder instruction is received.<a href="#section-6.4.1-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="parameter-value-encoding">
+<section id="section-6.4.2">
+          <h4 id="name-parameter-value-encoding">
+<a href="#section-6.4.2" class="section-number selfRef">6.4.2. </a><a href="#name-parameter-value-encoding" class="section-name selfRef">Parameter Value Encoding</a>
+          </h4>
+<p id="section-6.4.2-1">QPACK values contain the raw parameter value bytes without any MOQT length
+prefix. The QPACK value length field serves as the length for binary values.<a href="#section-6.4.2-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-6.4.2-2">
+            <dt id="section-6.4.2-2.1">For binary parameters (odd parameter types in MOQT):</dt>
+            <dd style="margin-left: 1.5em" id="section-6.4.2-2.2">
+              <p id="section-6.4.2-2.2.1">The QPACK value contains the raw binary bytes. The QPACK value length
+replaces the MOQT Length field. No length prefix is included in the value.<a href="#section-6.4.2-2.2.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-6.4.2-2.3">For integer parameters (even parameter types in MOQT):</dt>
+            <dd style="margin-left: 1.5em" id="section-6.4.2-2.4">
+              <p id="section-6.4.2-2.4.1">The QPACK value contains the varint-encoded integer. Note that this
+encoding carries redundant length information: the QPACK value length
+specifies the byte count, while the varint encoding is self-delimiting.
+If the varint-encoded length does not match the QPACK value length, the
+receiver <span class="bcp14">MUST</span> close the session with PROTOCOL_VIOLATION.<a href="#section-6.4.2-2.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+</dl>
+<p id="section-6.4.2-3">For example, DELIVERY_TIMEOUT with value 200:
+~~~
+QPACK Value Length: 2
+QPACK Value: 0xC8 0x01  (varint encoding of 200)
+~~~<a href="#section-6.4.2-3" class="pilcrow">¶</a></p>
+<p id="section-6.4.2-4">The receiver decodes the varint and verifies it consumed exactly 2 bytes.<a href="#section-6.4.2-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="authorization-token-encoding">
+<section id="section-6.4.3">
+          <h4 id="name-authorization-token-encodin">
+<a href="#section-6.4.3" class="section-number selfRef">6.4.3. </a><a href="#name-authorization-token-encodin" class="section-name selfRef">Authorization Token Encoding</a>
+          </h4>
+<p id="section-6.4.3-1">The AUTHORIZATION TOKEN parameter value contains the Token structure:<a href="#section-6.4.3-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-6.4.3-2">
+<pre>
+Token Value = Token Type (vi64) || Token Payload (..)
+</pre><a href="#section-6.4.3-2" class="pilcrow">¶</a>
+</div>
+<p id="section-6.4.3-3">For example, a JWT token (Token Type 1) is encoded as:<a href="#section-6.4.3-3" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-6.4.3-4">
+<pre>
+Literal Field Line With Name Reference:
+  Name Index: 0x03 (AUTHORIZATION_TOKEN)
+  Value: 0x01 || "eyJhbGciOiJIUzI1NiIs..."
+</pre><a href="#section-6.4.3-4" class="pilcrow">¶</a>
+</div>
+<p id="section-6.4.3-5">When this token is inserted into the dynamic table, subsequent references
+use only a single-byte Indexed Field Line.<a href="#section-6.4.3-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="decoding">
+<section id="section-6.5">
+        <h3 id="name-decoding">
+<a href="#section-6.5" class="section-number selfRef">6.5. </a><a href="#name-decoding" class="section-name selfRef">Decoding</a>
+        </h3>
+<p id="section-6.5-1">When receiving a message with a Compressed Block, the receiver:<a href="#section-6.5-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-6.5-2">
+<li id="section-6.5-2.1">
+            <p id="section-6.5-2.1.1">Parses fixed message fields (Request ID, Track Alias, etc.)<a href="#section-6.5-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-6.5-2.2">
+            <p id="section-6.5-2.2.1">If a Compressed Block is present:
+a. Waits for any referenced dynamic table entries to become available,
+   subject to MOQT_QPACK_BLOCKED_STREAMS limits
+b. Decodes the QPACK Compressed Block to recover namespace elements,
+   track name, and parameters<a href="#section-6.5-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-6.5-2.3">
+            <p id="section-6.5-2.3.1">Processes the fully decoded message<a href="#section-6.5-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ol>
+<p id="section-6.5-3">If QPACK decoding fails, the receiver <span class="bcp14">MUST</span> close the session with
+MOQPACK_DECOMPRESSION_FAILED.<a href="#section-6.5-3" class="pilcrow">¶</a></p>
+<p id="section-6.5-4">The total size of the decompressed message fields (the sum of all parameter
+values, namespace elements, and track name, excluding interior length fields)
+<span class="bcp14">MUST NOT</span> exceed 65536 bytes. If a decompressed message exceeds this limit,
+the receiver <span class="bcp14">MUST</span> close the session with MOQPACK_DECOMPRESSION_FAILED.<a href="#section-6.5-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="dynamic-table-management">
+<section id="section-7">
+      <h2 id="name-dynamic-table-management">
+<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-dynamic-table-management" class="section-name selfRef">Dynamic Table Management</a>
+      </h2>
+<div id="encoder-behavior">
+<section id="section-7.1">
+        <h3 id="name-encoder-behavior">
+<a href="#section-7.1" class="section-number selfRef">7.1. </a><a href="#name-encoder-behavior" class="section-name selfRef">Encoder Behavior</a>
+        </h3>
+<p id="section-7.1-1">Encoders <span class="bcp14">SHOULD</span> insert frequently-used parameter values into the dynamic table.
+Authorization tokens, Track Namespace Elements and Track names that will be
+reused across multiple messages are prime candidates for insertion.<a href="#section-7.1-1" class="pilcrow">¶</a></p>
+<p id="section-7.1-2">Short values like brief track names ("audio", "video") <span class="bcp14">MAY</span> be sent as literals
+rather than inserted, since the overhead of insertion and indexed reference
+is similar to sending the literal value. Insertion is more beneficial for:
+- Long values (large auth tokens, long namespace elements)
+- Values that will be reused across multiple messages (namespace elements
+  shared by many tracks, auth tokens used for many subscriptions)<a href="#section-7.1-2" class="pilcrow">¶</a></p>
+<p id="section-7.1-3">Encoders <span class="bcp14">MUST</span> respect the peer's MOQT_QPACK_MAX_TABLE_CAPACITY and
+MOQT_QPACK_BLOCKED_STREAMS limits when making insertion and reference
+decisions.<a href="#section-7.1-3" class="pilcrow">¶</a></p>
+<p id="section-7.1-4">Encoders <span class="bcp14">SHOULD</span> use the QPACK duplicate instruction when a dynamic table
+entry is at risk of eviction but is still frequently referenced.<a href="#section-7.1-4" class="pilcrow">¶</a></p>
+<div id="known-received-count">
+<section id="section-7.1.1">
+          <h4 id="name-known-received-count">
+<a href="#section-7.1.1" class="section-number selfRef">7.1.1. </a><a href="#name-known-received-count" class="section-name selfRef">Known Received Count</a>
+          </h4>
+<p id="section-7.1.1-1">Encoders track the Known Received Count as specified in <span>[<a href="#QPACK" class="cite xref">QPACK</a>]</span> Section 2.1.4
+to determine which entries can be referenced without blocking. Encoders <span class="bcp14">MUST</span>
+only reference dynamic table entries with absolute index less than the Known
+Received Count when the number of streams that would be blocked by the
+reference equals MOQT_QPACK_BLOCKED_STREAMS.<a href="#section-7.1.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="never-indexed-literals">
+<section id="section-7.1.2">
+          <h4 id="name-never-indexed-literals">
+<a href="#section-7.1.2" class="section-number selfRef">7.1.2. </a><a href="#name-never-indexed-literals" class="section-name selfRef">Never-Indexed Literals</a>
+          </h4>
+<p id="section-7.1.2-1">The 'N' bit in Literal Field Line representations signals that a value
+<span class="bcp14">MUST NOT</span> be indexed by intermediaries. Encoders <span class="bcp14">MAY</span> set the 'N' bit
+for sensitive values when:
+- The value should not be cached by relays
+- The value has low entropy and is vulnerable to compression attacks<a href="#section-7.1.2-1" class="pilcrow">¶</a></p>
+<p id="section-7.1.2-2">Note that when MOQT_QPACK_INDEX_SETUP_AUTH is enabled, setup auth tokens are
+implicitly inserted into the dynamic table (see
+<a href="#implicit-dynamic-table-seeding" class="auto internal xref">Section 3.3.1</a>).  Endpoints that require 'N' bit semantics
+for auth tokens <span class="bcp14">MUST NOT</span> enable MOQT_QPACK_INDEX_SETUP_AUTH and <span class="bcp14">SHOULD</span> instead
+send tokens as Never-Indexed Literals in each message.<a href="#section-7.1.2-2" class="pilcrow">¶</a></p>
+<p id="section-7.1.2-3">Intermediaries that re-encode MOQT messages <span class="bcp14">MUST</span> preserve the 'N' bit
+semantics: values encoded with N=1 <span class="bcp14">MUST NOT</span> be inserted into the dynamic
+table.<a href="#section-7.1.2-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="avoiding-flow-control-deadlocks">
+<section id="section-7.1.3">
+          <h4 id="name-avoiding-flow-control-deadl">
+<a href="#section-7.1.3" class="section-number selfRef">7.1.3. </a><a href="#name-avoiding-flow-control-deadl" class="section-name selfRef">Avoiding Flow Control Deadlocks</a>
+          </h4>
+<p id="section-7.1.3-1">Writing large encoder instructions can cause deadlocks if the decoder
+withholds flow control credit until the instruction is complete. To avoid
+this, encoders <span class="bcp14">SHOULD NOT</span> write an encoder instruction unless sufficient
+stream and connection flow-control credit is available for the entire
+instruction. See <span>[<a href="#QPACK" class="cite xref">QPACK</a>]</span> Section 2.1.3.<a href="#section-7.1.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="decoder-behavior">
+<section id="section-7.2">
+        <h3 id="name-decoder-behavior">
+<a href="#section-7.2" class="section-number selfRef">7.2. </a><a href="#name-decoder-behavior" class="section-name selfRef">Decoder Behavior</a>
+        </h3>
+<p id="section-7.2-1">Decoders <span class="bcp14">MUST</span> process encoder instructions from the QPACK encoder stream
+before processing any message that might reference those insertions.<a href="#section-7.2-1" class="pilcrow">¶</a></p>
+<p id="section-7.2-2">Decoders <span class="bcp14">MUST</span> send Section Acknowledgment instructions on the QPACK decoder
+stream after successfully decoding a Compressed Block that references the
+dynamic table (Required Insert Count &gt; 0). Compressed Blocks that contain
+only Literal Field Lines with Static Name References do not require
+acknowledgment.<a href="#section-7.2-2" class="pilcrow">¶</a></p>
+<div id="decoder-instructions-with-request-ids">
+<section id="section-7.2.1">
+          <h4 id="name-decoder-instructions-with-r">
+<a href="#section-7.2.1" class="section-number selfRef">7.2.1. </a><a href="#name-decoder-instructions-with-r" class="section-name selfRef">Decoder Instructions with Request IDs</a>
+          </h4>
+<p id="section-7.2.1-1">QPACK decoder instructions that reference streams (Section Acknowledgment,
+Stream Cancellation) use Request IDs instead of QUIC Stream IDs. This
+allows MOQT to operate over WebTransport where QUIC Stream IDs are not
+exposed to the application.<a href="#section-7.2.1-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-7.2.1-2">
+            <dt id="section-7.2.1-2.1">Section Acknowledgment:</dt>
+            <dd style="margin-left: 1.5em" id="section-7.2.1-2.2">
+              <p id="section-7.2.1-2.2.1">Carries a Request ID. Acknowledges successful decoding of a Compressed
+Block that referenced the dynamic table. For streams with multiple such
+Compressed Blocks (e.g., SUBSCRIBE_NAMESPACE response stream with multiple
+NAMESPACE messages referencing the dynamic table), successive Section
+Acknowledgments for the same Request ID acknowledge successive Compressed
+Blocks in the order they were sent. Compressed Blocks with no dynamic
+table references are not counted.<a href="#section-7.2.1-2.2.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-7.2.1-2.3">Stream Cancellation:</dt>
+            <dd style="margin-left: 1.5em" id="section-7.2.1-2.4">
+              <p id="section-7.2.1-2.4.1">Carries a Request ID. Indicates the stream was cancelled before the
+Compressed Block(s) could be decoded. The encoder <span class="bcp14">MUST NOT</span> count
+references from that stream when determining eviction eligibility.<a href="#section-7.2.1-2.4.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-7.2.1-2.5">Insert Count Increment:</dt>
+            <dd style="margin-left: 1.5em" id="section-7.2.1-2.6">
+              <p id="section-7.2.1-2.6.1">Unchanged from <span>[<a href="#QPACK" class="cite xref">QPACK</a>]</span>. Carries an increment value, no Request ID.<a href="#section-7.2.1-2.6.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+</dl>
+<p id="section-7.2.1-3">The encoder tracks how many Compressed Blocks it has sent for each
+Request ID. When it receives a Section Acknowledgment for a Request ID,
+it knows which Compressed Block was acknowledged based on the count.<a href="#section-7.2.1-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="error-handling">
+<section id="section-8">
+      <h2 id="name-error-handling">
+<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-error-handling" class="section-name selfRef">Error Handling</a>
+      </h2>
+<div id="moqpack_decompression_failed">
+<section id="section-8.1">
+        <h3 id="name-moqpack_decompression_faile">
+<a href="#section-8.1" class="section-number selfRef">8.1. </a><a href="#name-moqpack_decompression_faile" class="section-name selfRef">MOQPACK_DECOMPRESSION_FAILED</a>
+        </h3>
+<p id="section-8.1-1">This document defines a new MOQT session error code:<a href="#section-8.1-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-8.1-2">
+          <dt id="section-8.1-2.1">MOQPACK_DECOMPRESSION_FAILED (0xTBD):</dt>
+          <dd style="margin-left: 1.5em" id="section-8.1-2.2">
+            <p id="section-8.1-2.2.1">A QPACK Compressed Block could not be decoded, or the decompressed message
+exceeded implementation limits. This is always a session error; the
+endpoint <span class="bcp14">MUST</span> close the MOQT session.<a href="#section-8.1-2.2.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="qpack-errors">
+<section id="section-8.2">
+        <h3 id="name-qpack-errors">
+<a href="#section-8.2" class="section-number selfRef">8.2. </a><a href="#name-qpack-errors" class="section-name selfRef">QPACK Errors</a>
+        </h3>
+<p id="section-8.2-1">QPACK decoding errors (as defined in Section 6 of <span>[<a href="#QPACK" class="cite xref">QPACK</a>]</span>) result in
+session termination. The specific mapping is:<a href="#section-8.2-1" class="pilcrow">¶</a></p>
+<table class="center" id="table-3">
+          <caption><a href="#table-3" class="selfRef">Table 3</a></caption>
+<thead>
+            <tr>
+              <th class="text-left" rowspan="1" colspan="1">QPACK Error</th>
+              <th class="text-left" rowspan="1" colspan="1">MOQT Session Error</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">QPACK_DECOMPRESSION_FAILED</td>
+              <td class="text-left" rowspan="1" colspan="1">MOQPACK_DECOMPRESSION_FAILED</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">QPACK_ENCODER_STREAM_ERROR</td>
+              <td class="text-left" rowspan="1" colspan="1">PROTOCOL_VIOLATION</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">QPACK_DECODER_STREAM_ERROR</td>
+              <td class="text-left" rowspan="1" colspan="1">PROTOCOL_VIOLATION</td>
+            </tr>
+          </tbody>
+        </table>
+</section>
+</div>
+<div id="stream-errors">
+<section id="section-8.3">
+        <h3 id="name-stream-errors">
+<a href="#section-8.3" class="section-number selfRef">8.3. </a><a href="#name-stream-errors" class="section-name selfRef">Stream Errors</a>
+        </h3>
+<p id="section-8.3-1">If a QPACK encoder or decoder stream is reset or closed before the MOQT
+session ends, the receiving endpoint <span class="bcp14">MUST</span> close the session with
+PROTOCOL_VIOLATION.<a href="#section-8.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
 </section>
 </div>
 <div id="security-considerations">
-<section id="section-3">
+<section id="section-9">
       <h2 id="name-security-considerations">
-<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
       </h2>
-<p id="section-3-1">TODO Security<a href="#section-3-1" class="pilcrow">¶</a></p>
+<div id="dynamic-table-state">
+<section id="section-9.1">
+        <h3 id="name-dynamic-table-state">
+<a href="#section-9.1" class="section-number selfRef">9.1. </a><a href="#name-dynamic-table-state" class="section-name selfRef">Dynamic Table State</a>
+        </h3>
+<p id="section-9.1-1">The QPACK dynamic table maintains state across messages. An attacker with
+knowledge of dynamic table contents could potentially:<a href="#section-9.1-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-9.1-2.1">
+            <p id="section-9.1-2.1.1">Determine which authorization tokens have been used<a href="#section-9.1-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-9.1-2.2">
+            <p id="section-9.1-2.2.1">Infer subscription patterns from parameter compression ratios<a href="#section-9.1-2.2.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-9.1-3">Implementations <span class="bcp14">SHOULD</span> consider these privacy implications when deciding
+which values to insert into the dynamic table.<a href="#section-9.1-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="compression-oracle-attacks">
+<section id="section-9.2">
+        <h3 id="name-compression-oracle-attacks">
+<a href="#section-9.2" class="section-number selfRef">9.2. </a><a href="#name-compression-oracle-attacks" class="section-name selfRef">Compression Oracle Attacks</a>
+        </h3>
+<p id="section-9.2-1">As with HTTP compression, implementers need to take care to avoid compression
+oracle attacks where an attacker can infer secret values by observing compressed
+message sizes. Applications <span class="bcp14">SHOULD NOT</span> mix attacker-controlled data with
+secret authorization tokens in the same field section.<a href="#section-9.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="resource-exhaustion">
+<section id="section-9.3">
+        <h3 id="name-resource-exhaustion">
+<a href="#section-9.3" class="section-number selfRef">9.3. </a><a href="#name-resource-exhaustion" class="section-name selfRef">Resource Exhaustion</a>
+        </h3>
+<p id="section-9.3-1">Endpoints <span class="bcp14">MUST</span> enforce the negotiated table capacity limits to prevent
+resource exhaustion attacks. An endpoint that attempts to exceed these
+limits causes a session error.<a href="#section-9.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
 </section>
 </div>
 <div id="iana-considerations">
-<section id="section-4">
+<section id="section-10">
       <h2 id="name-iana-considerations">
-<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+<a href="#section-10" class="section-number selfRef">10. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
       </h2>
-<p id="section-4-1">This document has no IANA actions.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<div id="setup-parameter-types">
+<section id="section-10.1">
+        <h3 id="name-setup-parameter-types">
+<a href="#section-10.1" class="section-number selfRef">10.1. </a><a href="#name-setup-parameter-types" class="section-name selfRef">Setup Parameter Types</a>
+        </h3>
+<p id="section-10.1-1">This document registers the following Setup Parameter Types in the
+"MOQT Setup Parameters" registry:<a href="#section-10.1-1" class="pilcrow">¶</a></p>
+<table class="center" id="table-4">
+          <caption><a href="#table-4" class="selfRef">Table 4</a></caption>
+<thead>
+            <tr>
+              <th class="text-left" rowspan="1" colspan="1">Parameter Type</th>
+              <th class="text-left" rowspan="1" colspan="1">Parameter Name</th>
+              <th class="text-left" rowspan="1" colspan="1">Specification</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x10</td>
+              <td class="text-left" rowspan="1" colspan="1">MOQT_QPACK_MAX_TABLE_CAPACITY</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <a href="#extension-negotiation" class="auto internal xref">Section 3</a>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x11</td>
+              <td class="text-left" rowspan="1" colspan="1">MOQT_QPACK_BLOCKED_STREAMS</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <a href="#extension-negotiation" class="auto internal xref">Section 3</a>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x12</td>
+              <td class="text-left" rowspan="1" colspan="1">MOQT_QPACK_INDEX_SETUP_AUTH</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <a href="#extension-negotiation" class="auto internal xref">Section 3</a>
+</td>
+            </tr>
+          </tbody>
+        </table>
 </section>
 </div>
-<div id="sec-normative-references">
-<section id="section-5">
-      <h2 id="name-normative-references">
-<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+<div id="unidirectional-stream-types">
+<section id="section-10.2">
+        <h3 id="name-unidirectional-stream-types">
+<a href="#section-10.2" class="section-number selfRef">10.2. </a><a href="#name-unidirectional-stream-types" class="section-name selfRef">Unidirectional Stream Types</a>
+        </h3>
+<p id="section-10.2-1">This document registers the following unidirectional stream types in the
+"MOQT Stream Types" registry:<a href="#section-10.2-1" class="pilcrow">¶</a></p>
+<table class="center" id="table-5">
+          <caption><a href="#table-5" class="selfRef">Table 5</a></caption>
+<thead>
+            <tr>
+              <th class="text-left" rowspan="1" colspan="1">Stream Type</th>
+              <th class="text-left" rowspan="1" colspan="1">Name</th>
+              <th class="text-left" rowspan="1" colspan="1">Specification</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x1f107a60</td>
+              <td class="text-left" rowspan="1" colspan="1">QPACK_ENCODER_STREAM</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <a href="#stream-types" class="auto internal xref">Section 4.1</a>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x1f107a61</td>
+              <td class="text-left" rowspan="1" colspan="1">QPACK_DECODER_STREAM</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <a href="#stream-types" class="auto internal xref">Section 4.1</a>
+</td>
+            </tr>
+          </tbody>
+        </table>
+</section>
+</div>
+<div id="pseudo-parameter-types-1">
+<section id="section-10.3">
+        <h3 id="name-pseudo-parameter-types-2">
+<a href="#section-10.3" class="section-number selfRef">10.3. </a><a href="#name-pseudo-parameter-types-2" class="section-name selfRef">Pseudo-Parameter Types</a>
+        </h3>
+<p id="section-10.3-1">This document registers the following pseudo-parameter types in the
+"MOQT Message Parameters" registry. These types are reserved for use in
+QPACK Compressed Blocks and <span class="bcp14">MUST NOT</span> appear in standard Parameters fields.<a href="#section-10.3-1" class="pilcrow">¶</a></p>
+<table class="center" id="table-6">
+          <caption><a href="#table-6" class="selfRef">Table 6</a></caption>
+<thead>
+            <tr>
+              <th class="text-left" rowspan="1" colspan="1">Parameter Type</th>
+              <th class="text-left" rowspan="1" colspan="1">Parameter Name</th>
+              <th class="text-left" rowspan="1" colspan="1">Specification</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x00</td>
+              <td class="text-left" rowspan="1" colspan="1">TRACK_NAMESPACE_ELEMENT</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <a href="#pseudo-parameter-types" class="auto internal xref">Section 5.2</a>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x01</td>
+              <td class="text-left" rowspan="1" colspan="1">TRACK_NAMESPACE_SET</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <a href="#pseudo-parameter-types" class="auto internal xref">Section 5.2</a>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x02</td>
+              <td class="text-left" rowspan="1" colspan="1">TRACK_NAME</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <a href="#pseudo-parameter-types" class="auto internal xref">Section 5.2</a>
+</td>
+            </tr>
+          </tbody>
+        </table>
+</section>
+</div>
+<div id="session-error-codes">
+<section id="section-10.4">
+        <h3 id="name-session-error-codes">
+<a href="#section-10.4" class="section-number selfRef">10.4. </a><a href="#name-session-error-codes" class="section-name selfRef">Session Error Codes</a>
+        </h3>
+<p id="section-10.4-1">This document registers the following session error code in the
+"MOQT Session Error Codes" registry:<a href="#section-10.4-1" class="pilcrow">¶</a></p>
+<table class="center" id="table-7">
+          <caption><a href="#table-7" class="selfRef">Table 7</a></caption>
+<thead>
+            <tr>
+              <th class="text-left" rowspan="1" colspan="1">Error Code</th>
+              <th class="text-left" rowspan="1" colspan="1">Name</th>
+              <th class="text-left" rowspan="1" colspan="1">Specification</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0xTBD</td>
+              <td class="text-left" rowspan="1" colspan="1">MOQPACK_DECOMPRESSION_FAILED</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <a href="#moqpack_decompression_failed" class="auto internal xref">Section 8.1</a>
+</td>
+            </tr>
+          </tbody>
+        </table>
+</section>
+</div>
+</section>
+</div>
+<div id="sec-combined-references">
+<section id="section-11">
+      <h2 id="name-references">
+<a href="#section-11" class="section-number selfRef">11. </a><a href="#name-references" class="section-name selfRef">References</a>
       </h2>
+<div id="sec-normative-references">
+<section id="section-11.1">
+        <h3 id="name-normative-references">
+<a href="#section-11.1" class="section-number selfRef">11.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+        </h3>
 <dl class="references">
+<dt id="MOQT">[MOQT]</dt>
+        <dd>
+<span class="refAuthor">Nandakumar, S.</span>, <span class="refAuthor">Vasiliev, V.</span>, <span class="refAuthor">Swett, I.</span>, and <span class="refAuthor">A. Frindell</span>, <span class="refTitle">"Media over QUIC Transport"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-moq-transport-16</span>, <time datetime="2026-01-13" class="refDate">13 January 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-moq-transport-16">https://datatracker.ietf.org/doc/html/draft-ietf-moq-transport-16</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="QPACK">[QPACK]</dt>
+        <dd>
+<span class="refAuthor">Krasic, C.</span>, <span class="refAuthor">Bishop, M.</span>, and <span class="refAuthor">A. Frindell, Ed.</span>, <span class="refTitle">"QPACK: Field Compression for HTTP/3"</span>, <span class="seriesInfo">RFC 9204</span>, <span class="seriesInfo">DOI 10.17487/RFC9204</span>, <time datetime="2022-06" class="refDate">June 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9204">https://www.rfc-editor.org/rfc/rfc9204</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="QUIC">[QUIC]</dt>
+        <dd>
+<span class="refAuthor">Iyengar, J., Ed.</span> and <span class="refAuthor">M. Thomson, Ed.</span>, <span class="refTitle">"QUIC: A UDP-Based Multiplexed and Secure Transport"</span>, <span class="seriesInfo">RFC 9000</span>, <span class="seriesInfo">DOI 10.17487/RFC9000</span>, <time datetime="2021-05" class="refDate">May 2021</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9000">https://www.rfc-editor.org/rfc/rfc9000</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="RFC2119">[RFC2119]</dt>
-      <dd>
+        <dd>
 <span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC8174">[RFC8174]</dt>
-    <dd>
+      <dd>
 <span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
+</section>
+</div>
+<div id="sec-informative-references">
+<section id="section-11.2">
+        <h3 id="name-informative-references">
+<a href="#section-11.2" class="section-number selfRef">11.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+        </h3>
+<dl class="references">
+<dt id="HPACK">[HPACK]</dt>
+      <dd>
+<span class="refAuthor">Peon, R.</span> and <span class="refAuthor">H. Ruellan</span>, <span class="refTitle">"HPACK: Header Compression for HTTP/2"</span>, <span class="seriesInfo">RFC 7541</span>, <span class="seriesInfo">DOI 10.17487/RFC7541</span>, <time datetime="2015-05" class="refDate">May 2015</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7541">https://www.rfc-editor.org/rfc/rfc7541</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
 </section>
 </div>
 <div id="acknowledgments">
@@ -1229,20 +2777,409 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
       <h2 id="name-acknowledgments">
 <a href="#name-acknowledgments" class="section-name selfRef">Acknowledgments</a>
       </h2>
-<p id="appendix-A-1">TODO acknowledge.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+<p id="appendix-A-1">The QPACK specification <span>[<a href="#QPACK" class="cite xref">QPACK</a>]</span> provides the foundation for this work.
+The design of HTTP/3 header compression informed many decisions in this
+document.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+<p id="appendix-A-2">Claude, by Anthropic, assisted in drafting this document.<a href="#appendix-A-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="example-encoding">
+<section id="appendix-B">
+      <h2 id="name-example-encoding">
+<a href="#name-example-encoding" class="section-name selfRef">Example Encoding</a>
+      </h2>
+<p id="appendix-B-1">This appendix provides an example of QPACK-compressed MOQT messages,
+demonstrating the Required Insert Count, Base, and relative indexing.<a href="#appendix-B-1" class="pilcrow">¶</a></p>
+<div id="scenario">
+<section id="appendix-B.1">
+        <h3 id="name-scenario">
+<a href="#name-scenario" class="section-name selfRef">Scenario</a>
+        </h3>
+<p id="appendix-B.1-1">A client sends three SUBSCRIBE messages to the same track with the same
+authorization token:<a href="#appendix-B.1-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="appendix-B.1-2.1">
+            <p id="appendix-B.1-2.1.1">Track Namespace: ("conference", "room42")<a href="#appendix-B.1-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-B.1-2.2">
+            <p id="appendix-B.1-2.2.1">Track Name: "audio"<a href="#appendix-B.1-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-B.1-2.3">
+            <p id="appendix-B.1-2.3.1">Token Type: 1 (e.g., JWT)<a href="#appendix-B.1-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-B.1-2.4">
+            <p id="appendix-B.1-2.4.1">Token Value: "eyJhbGciOiJIUzI1NiIs..." (500 bytes)<a href="#appendix-B.1-2.4.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="appendix-B.1-3">The auth token was sent in CLIENT_SETUP and is implicitly inserted at
+dynamic table absolute index 0 after QPACK negotiation succeeds.<a href="#appendix-B.1-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="first-subscribe">
+<section id="appendix-B.2">
+        <h3 id="name-first-subscribe">
+<a href="#name-first-subscribe" class="section-name selfRef">First SUBSCRIBE</a>
+        </h3>
+<p id="appendix-B.2-1">The encoder inserts namespace elements on the encoder stream. The short track
+name "audio" is sent as a literal rather than inserted:<a href="#appendix-B.2-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-B.2-2">
+<pre>
+Encoder Stream:
+  Insert With Static Name Reference
+    Name Index: 0x00 (TRACK_NAMESPACE_ELEMENT)
+    Value: "conference"
+  Insert With Static Name Reference
+    Name Index: 0x00 (TRACK_NAMESPACE_ELEMENT)
+    Value: "room42"
+</pre><a href="#appendix-B.2-2" class="pilcrow">¶</a>
+</div>
+<p id="appendix-B.2-3">Dynamic table state after insertions:<a href="#appendix-B.2-3" class="pilcrow">¶</a></p>
+<table class="center" id="table-8">
+          <caption><a href="#table-8" class="selfRef">Table 8</a></caption>
+<thead>
+            <tr>
+              <th class="text-left" rowspan="1" colspan="1">Absolute Index</th>
+              <th class="text-left" rowspan="1" colspan="1">Parameter Type</th>
+              <th class="text-left" rowspan="1" colspan="1">Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0</td>
+              <td class="text-left" rowspan="1" colspan="1">AUTH_TOKEN (implicit)</td>
+              <td class="text-left" rowspan="1" colspan="1">Token Type 1, "eyJ..."</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">1</td>
+              <td class="text-left" rowspan="1" colspan="1">TRACK_NAMESPACE_ELEMENT</td>
+              <td class="text-left" rowspan="1" colspan="1">"conference"</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">TRACK_NAMESPACE_ELEMENT</td>
+              <td class="text-left" rowspan="1" colspan="1">"room42"</td>
+            </tr>
+          </tbody>
+        </table>
+<p id="appendix-B.2-5">The encoder sends the SUBSCRIBE with Required Insert Count = 3 and Base = 3:<a href="#appendix-B.2-5" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-B.2-6">
+<pre>
+SUBSCRIBE Message:
+  Type: 0x3
+  Request ID: 1
+  Track Alias: 100
+  Compressed Block Length: 12
+  Compressed Block:
+    Required Insert Count: 3 (encoded per RFC 9204 Section 4.5.1.1)
+    Base: Sign=0, Delta=0 (Base = Required Insert Count = 3)
+    Indexed Field Line (Dynamic, relative index 1)  // abs 1 = "conference"
+    Indexed Field Line (Dynamic, relative index 0)  // abs 2 = "room42"
+    Literal Field Line (Static Name 0x02, Value "audio")  // TRACK_NAME
+    Indexed Field Line (Dynamic, relative index 2)  // abs 0 = AUTH_TOKEN
+</pre><a href="#appendix-B.2-6" class="pilcrow">¶</a>
+</div>
+<p id="appendix-B.2-7">Relative index calculation: relative = Base - 1 - absolute<a href="#appendix-B.2-7" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="appendix-B.2-8.1">
+            <p id="appendix-B.2-8.1.1">"conference": relative = 3 - 1 - 1 = 1<a href="#appendix-B.2-8.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-B.2-8.2">
+            <p id="appendix-B.2-8.2.1">"room42": relative = 3 - 1 - 2 = 0<a href="#appendix-B.2-8.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-B.2-8.3">
+            <p id="appendix-B.2-8.3.1">AUTH_TOKEN: relative = 3 - 1 - 0 = 2<a href="#appendix-B.2-8.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="appendix-B.2-9">Compressed Block: ~12 bytes (including prefix and literal track name)
+Uncompressed equivalent: ~526 bytes<a href="#appendix-B.2-9" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="subsequent-subscribes-to-same-track">
+<section id="appendix-B.3">
+        <h3 id="name-subsequent-subscribes-to-sa">
+<a href="#name-subsequent-subscribes-to-sa" class="section-name selfRef">Subsequent SUBSCRIBEs to Same Track</a>
+        </h3>
+<p id="appendix-B.3-1">No encoder stream instructions needed; namespace elements are in the table,
+track name is sent as literal again:<a href="#appendix-B.3-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-B.3-2">
+<pre>
+SUBSCRIBE Message:
+  Type: 0x3
+  Request ID: 2
+  Track Alias: 101
+  Compressed Block Length: 12
+  Compressed Block:
+    Required Insert Count: 3
+    Base: Sign=0, Delta=0
+    Indexed Field Line (Dynamic, relative index 1)  // "conference"
+    Indexed Field Line (Dynamic, relative index 0)  // "room42"
+    Literal Field Line (Static Name 0x02, Value "audio")  // TRACK_NAME
+    Indexed Field Line (Dynamic, relative index 2)  // AUTH_TOKEN
+</pre><a href="#appendix-B.3-2" class="pilcrow">¶</a>
+</div>
+<p id="appendix-B.3-3">Each subsequent SUBSCRIBE to the same track: ~12 bytes instead of ~526 bytes.<a href="#appendix-B.3-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="subscribe-to-different-track-same-namespace">
+<section id="appendix-B.4">
+        <h3 id="name-subscribe-to-different-trac">
+<a href="#name-subscribe-to-different-trac" class="section-name selfRef">SUBSCRIBE to Different Track, Same Namespace</a>
+        </h3>
+<p id="appendix-B.4-1">The track name "video" is also short, so we send it as a literal. No encoder
+stream instructions needed:<a href="#appendix-B.4-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-B.4-2">
+<pre>
+SUBSCRIBE Message:
+  Type: 0x3
+  Request ID: 3
+  Track Alias: 102
+  Compressed Block Length: 12
+  Compressed Block:
+    Required Insert Count: 3
+    Base: Sign=0, Delta=0
+    Indexed Field Line (Dynamic, relative index 1)  // "conference"
+    Indexed Field Line (Dynamic, relative index 0)  // "room42"
+    Literal Field Line (Static Name 0x02, Value "video")  // TRACK_NAME
+    Indexed Field Line (Dynamic, relative index 2)  // AUTH_TOKEN
+</pre><a href="#appendix-B.4-2" class="pilcrow">¶</a>
+</div>
+<p id="appendix-B.4-3">The namespace elements are reused; the different track name is sent as a literal.<a href="#appendix-B.4-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="total-savings">
+<section id="appendix-B.5">
+        <h3 id="name-total-savings">
+<a href="#name-total-savings" class="section-name selfRef">Total Savings</a>
+        </h3>
+<table class="center" id="table-9">
+          <caption><a href="#table-9" class="selfRef">Table 9</a></caption>
+<thead>
+            <tr>
+              <th class="text-left" rowspan="1" colspan="1">Encoding</th>
+              <th class="text-left" rowspan="1" colspan="1">Sub 1</th>
+              <th class="text-left" rowspan="1" colspan="1">Sub 2</th>
+              <th class="text-left" rowspan="1" colspan="1">Sub 3</th>
+              <th class="text-left" rowspan="1" colspan="1">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">Uncompressed</td>
+              <td class="text-left" rowspan="1" colspan="1">526</td>
+              <td class="text-left" rowspan="1" colspan="1">526</td>
+              <td class="text-left" rowspan="1" colspan="1">526</td>
+              <td class="text-left" rowspan="1" colspan="1">1578</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">MOQPACK</td>
+              <td class="text-left" rowspan="1" colspan="1">32*</td>
+              <td class="text-left" rowspan="1" colspan="1">12</td>
+              <td class="text-left" rowspan="1" colspan="1">12</td>
+              <td class="text-left" rowspan="1" colspan="1">56</td>
+            </tr>
+          </tbody>
+        </table>
+<p id="appendix-B.5-2">* Includes encoder stream insertions for namespace elements (~20 bytes)<a href="#appendix-B.5-2" class="pilcrow">¶</a></p>
+<p id="appendix-B.5-3">Savings: ~96% reduction in namespace/name/token overhead.<a href="#appendix-B.5-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="code-point-summary">
+<section id="appendix-C">
+      <h2 id="name-code-point-summary">
+<a href="#name-code-point-summary" class="section-name selfRef">Code Point Summary</a>
+      </h2>
+<p id="appendix-C-1">This appendix summarizes all code points defined or used by this extension.<a href="#appendix-C-1" class="pilcrow">¶</a></p>
+<div id="setup-parameters">
+<section id="appendix-C.1">
+        <h3 id="name-setup-parameters">
+<a href="#name-setup-parameters" class="section-name selfRef">Setup Parameters</a>
+        </h3>
+<table class="center" id="table-10">
+          <caption><a href="#table-10" class="selfRef">Table 10</a></caption>
+<thead>
+            <tr>
+              <th class="text-left" rowspan="1" colspan="1">Type</th>
+              <th class="text-left" rowspan="1" colspan="1">Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x10</td>
+              <td class="text-left" rowspan="1" colspan="1">MOQT_QPACK_MAX_TABLE_CAPACITY</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x11</td>
+              <td class="text-left" rowspan="1" colspan="1">MOQT_QPACK_BLOCKED_STREAMS</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x12</td>
+              <td class="text-left" rowspan="1" colspan="1">MOQT_QPACK_INDEX_SETUP_AUTH</td>
+            </tr>
+          </tbody>
+        </table>
+</section>
+</div>
+<div id="stream-types-1">
+<section id="appendix-C.2">
+        <h3 id="name-stream-types-2">
+<a href="#name-stream-types-2" class="section-name selfRef">Stream Types</a>
+        </h3>
+<table class="center" id="table-11">
+          <caption><a href="#table-11" class="selfRef">Table 11</a></caption>
+<thead>
+            <tr>
+              <th class="text-left" rowspan="1" colspan="1">Type</th>
+              <th class="text-left" rowspan="1" colspan="1">Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x1f107a60</td>
+              <td class="text-left" rowspan="1" colspan="1">QPACK_ENCODER_STREAM</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x1f107a61</td>
+              <td class="text-left" rowspan="1" colspan="1">QPACK_DECODER_STREAM</td>
+            </tr>
+          </tbody>
+        </table>
+</section>
+</div>
+<div id="pseudo-parameter-types-2">
+<section id="appendix-C.3">
+        <h3 id="name-pseudo-parameter-types-3">
+<a href="#name-pseudo-parameter-types-3" class="section-name selfRef">Pseudo-Parameter Types</a>
+        </h3>
+<table class="center" id="table-12">
+          <caption><a href="#table-12" class="selfRef">Table 12</a></caption>
+<thead>
+            <tr>
+              <th class="text-left" rowspan="1" colspan="1">Type</th>
+              <th class="text-left" rowspan="1" colspan="1">Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x00</td>
+              <td class="text-left" rowspan="1" colspan="1">TRACK_NAMESPACE_ELEMENT</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x01</td>
+              <td class="text-left" rowspan="1" colspan="1">TRACK_NAMESPACE_SET</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x02</td>
+              <td class="text-left" rowspan="1" colspan="1">TRACK_NAME</td>
+            </tr>
+          </tbody>
+        </table>
+</section>
+</div>
+<div id="moqpack-message-types">
+<section id="appendix-C.4">
+        <h3 id="name-moqpack-message-types">
+<a href="#name-moqpack-message-types" class="section-name selfRef">MOQPACK Message Types</a>
+        </h3>
+<p id="appendix-C.4-1">The MOQPACK flag bit (0x40) is OR'd with standard MOQT message types:<a href="#appendix-C.4-1" class="pilcrow">¶</a></p>
+<table class="center" id="table-13">
+          <caption><a href="#table-13" class="selfRef">Table 13</a></caption>
+<thead>
+            <tr>
+              <th class="text-left" rowspan="1" colspan="1">Standard</th>
+              <th class="text-left" rowspan="1" colspan="1">MOQPACK</th>
+              <th class="text-left" rowspan="1" colspan="1">Message</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x02</td>
+              <td class="text-left" rowspan="1" colspan="1">0x42</td>
+              <td class="text-left" rowspan="1" colspan="1">REQUEST_UPDATE</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x03</td>
+              <td class="text-left" rowspan="1" colspan="1">0x43</td>
+              <td class="text-left" rowspan="1" colspan="1">SUBSCRIBE</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x04</td>
+              <td class="text-left" rowspan="1" colspan="1">0x44</td>
+              <td class="text-left" rowspan="1" colspan="1">SUBSCRIBE_OK</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x05</td>
+              <td class="text-left" rowspan="1" colspan="1">0x45</td>
+              <td class="text-left" rowspan="1" colspan="1">REQUEST_ERROR</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x06</td>
+              <td class="text-left" rowspan="1" colspan="1">0x46</td>
+              <td class="text-left" rowspan="1" colspan="1">PUBLISH_NAMESPACE</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x07</td>
+              <td class="text-left" rowspan="1" colspan="1">0x47</td>
+              <td class="text-left" rowspan="1" colspan="1">REQUEST_OK</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x08</td>
+              <td class="text-left" rowspan="1" colspan="1">0x48</td>
+              <td class="text-left" rowspan="1" colspan="1">NAMESPACE</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x0D</td>
+              <td class="text-left" rowspan="1" colspan="1">0x4D</td>
+              <td class="text-left" rowspan="1" colspan="1">TRACK_STATUS</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x0E</td>
+              <td class="text-left" rowspan="1" colspan="1">0x4E</td>
+              <td class="text-left" rowspan="1" colspan="1">NAMESPACE_DONE</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x11</td>
+              <td class="text-left" rowspan="1" colspan="1">0x51</td>
+              <td class="text-left" rowspan="1" colspan="1">SUBSCRIBE_NAMESPACE</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x16</td>
+              <td class="text-left" rowspan="1" colspan="1">0x56</td>
+              <td class="text-left" rowspan="1" colspan="1">FETCH</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x18</td>
+              <td class="text-left" rowspan="1" colspan="1">0x58</td>
+              <td class="text-left" rowspan="1" colspan="1">FETCH_OK</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x1D</td>
+              <td class="text-left" rowspan="1" colspan="1">0x5D</td>
+              <td class="text-left" rowspan="1" colspan="1">PUBLISH</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x1E</td>
+              <td class="text-left" rowspan="1" colspan="1">0x5E</td>
+              <td class="text-left" rowspan="1" colspan="1">PUBLISH_OK</td>
+            </tr>
+          </tbody>
+        </table>
+</section>
+</div>
 </section>
 </div>
 <div id="authors-addresses">
-<section id="appendix-B">
+<section id="appendix-D">
       <h2 id="name-authors-address">
 <a href="#name-authors-address" class="section-name selfRef">Author's Address</a>
       </h2>
 <address class="vcard">
-        <div dir="auto" class="left"><span class="fn nameRole">Your Name Here</span></div>
-<div dir="auto" class="left"><span class="org">Your Organization Here</span></div>
+        <div dir="auto" class="left"><span class="fn nameRole">Alan Frindell</span></div>
+<div dir="auto" class="left"><span class="org">Meta</span></div>
 <div class="email">
 <span>Email:</span>
-<a href="mailto:your.email@example.com" class="email">your.email@example.com</a>
+<a href="mailto:afrind@meta.com" class="email">afrind@meta.com</a>
 </div>
 </address>
 </section>
