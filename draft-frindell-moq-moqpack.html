@@ -8,7 +8,7 @@
 <meta content="Alan Frindell" name="author">
 <meta content="
        This document defines an extension to Media over QUIC Transport (MOQT) that
-enables QPACK compression for contol messages. By leveraging QPACK's dynamic
+enables QPACK compression for control messages. By leveraging QPACK's dynamic
 table, this extension significantly reduces the overhead of repeated
 values such as track names and authorization tokens, improving efficiency for
 sessions with many subscriptions or frequent redundant values. 
@@ -1087,7 +1087,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
 <p id="section-abstract-1">This document defines an extension to Media over QUIC Transport (MOQT) that
-enables QPACK compression for contol messages. By leveraging QPACK's dynamic
+enables QPACK compression for control messages. By leveraging QPACK's dynamic
 table, this extension significantly reduces the overhead of repeated
 values such as track names and authorization tokens, improving efficiency for
 sessions with many subscriptions or frequent redundant values.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
@@ -1203,6 +1203,11 @@ sessions with many subscriptions or frequent redundant values.<a href="#section-
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.2">
                 <p id="section-toc.1-1.5.2.2.1"><a href="#section-5.2" class="auto internal xref">5.2</a>.  <a href="#name-pseudo-parameter-types" class="internal xref">Pseudo-Parameter Types</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.2.2.1">
+                    <p id="section-toc.1-1.5.2.2.2.1.1"><a href="#section-5.2.1" class="auto internal xref">5.2.1</a>.  <a href="#name-track_namespace_set-value-f" class="internal xref">TRACK_NAMESPACE_SET Value Format</a></p>
+</li>
+                </ul>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.3">
                 <p id="section-toc.1-1.5.2.3.1"><a href="#section-5.3" class="auto internal xref">5.3</a>.  <a href="#name-namespace-reconstruction" class="internal xref">Namespace Reconstruction</a></p>
@@ -1354,7 +1359,10 @@ sessions with many subscriptions or frequent redundant values.<a href="#section-
                 <p id="section-toc.1-1.10.2.3.1"><a href="#section-10.3" class="auto internal xref">10.3</a>.  <a href="#name-pseudo-parameter-types-2" class="internal xref">Pseudo-Parameter Types</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.4">
-                <p id="section-toc.1-1.10.2.4.1"><a href="#section-10.4" class="auto internal xref">10.4</a>.  <a href="#name-session-error-codes" class="internal xref">Session Error Codes</a></p>
+                <p id="section-toc.1-1.10.2.4.1"><a href="#section-10.4" class="auto internal xref">10.4</a>.  <a href="#name-message-types" class="internal xref">Message Types</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.5">
+                <p id="section-toc.1-1.10.2.5.1"><a href="#section-10.5" class="auto internal xref">10.5</a>.  <a href="#name-session-error-codes" class="internal xref">Session Error Codes</a></p>
 </li>
             </ul>
 </li>
@@ -1387,9 +1395,6 @@ sessions with many subscriptions or frequent redundant values.<a href="#section-
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.4">
                 <p id="section-toc.1-1.13.2.4.1"><a href="#appendix-B.4" class="auto internal xref"></a><a href="#name-subscribe-to-different-trac" class="internal xref">SUBSCRIBE to Different Track, Same Namespace</a></p>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.5">
-                <p id="section-toc.1-1.13.2.5.1"><a href="#appendix-B.5" class="auto internal xref"></a><a href="#name-total-savings" class="internal xref">Total Savings</a></p>
-</li>
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14">
@@ -1410,7 +1415,27 @@ sessions with many subscriptions or frequent redundant values.<a href="#section-
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.15">
-            <p id="section-toc.1-1.15.1"><a href="#appendix-D" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
+            <p id="section-toc.1-1.15.1"><a href="#appendix-D" class="auto internal xref"></a><a href="#name-qpack-library-adaptation-no" class="internal xref">QPACK Library Adaptation Notes</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.15.2.1">
+                <p id="section-toc.1-1.15.2.1.1"><a href="#appendix-D.1" class="auto internal xref"></a><a href="#name-static-table" class="internal xref">Static Table</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.15.2.2">
+                <p id="section-toc.1-1.15.2.2.1"><a href="#appendix-D.2" class="auto internal xref"></a><a href="#name-prohibited-encodings" class="internal xref">Prohibited Encodings</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.15.2.3">
+                <p id="section-toc.1-1.15.2.3.1"><a href="#appendix-D.3" class="auto internal xref"></a><a href="#name-encoder-stream-instructions-2" class="internal xref">Encoder Stream Instructions</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.15.2.4">
+                <p id="section-toc.1-1.15.2.4.1"><a href="#appendix-D.4" class="auto internal xref"></a><a href="#name-decoder-stream-request-ids-" class="internal xref">Decoder Stream: Request IDs Instead of Stream IDs</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.15.2.5">
+                <p id="section-toc.1-1.15.2.5.1"><a href="#appendix-D.5" class="auto internal xref"></a><a href="#name-entry-size-calculation" class="internal xref">Entry Size Calculation</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.16">
+            <p id="section-toc.1-1.16.1"><a href="#appendix-E" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
 </li>
         </ul>
 </nav>
@@ -1421,7 +1446,7 @@ sessions with many subscriptions or frequent redundant values.<a href="#section-
       <h2 id="name-introduction">
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
-<p id="section-1-1">Media over QUIC Transport (MOQT) <span>[<a href="#MOQT" class="cite xref">MOQT</a>]</span> control message message fields and
+<p id="section-1-1">Media over QUIC Transport (MOQT) <span>[<a href="#MOQT" class="cite xref">MOQT</a>]</span> control message fields and
 parameters can contain large values that are repeated across many messages
 within a session. The base MOQT specification transmits this information in full
 each time it appears, which can result in significant overhead.<a href="#section-1-1" class="pilcrow">¶</a></p>
@@ -1532,8 +1557,8 @@ if desired.<a href="#section-3.3-5" class="pilcrow">¶</a></p>
 <p id="section-3.3-6">When both endpoints send MOQT_QPACK_INDEX_SETUP_AUTH with value 1, any
 AUTHORIZATION TOKEN options from the Setup messages are implicitly inserted
 into the dynamic table without requiring encoder stream instructions.<a href="#section-3.3-6" class="pilcrow">¶</a></p>
-<p id="section-3.3-7">Tokens from Setup message, in the order they appeared, are inserted into
-the receiver's encoder dynamic table (indices 0, 1, 2, ...)<a href="#section-3.3-7" class="pilcrow">¶</a></p>
+<p id="section-3.3-7">Tokens from the Setup message, in the order they appeared, are inserted into
+the receiver's decoder dynamic table (indices 0, 1, 2, ...)<a href="#section-3.3-7" class="pilcrow">¶</a></p>
 <p id="section-3.3-8">This allows the client to immediately reference its setup auth token in
 the first SUBSCRIBE message using a dynamic table reference, without
 resending it on the encoder stream.<a href="#section-3.3-8" class="pilcrow">¶</a></p>
@@ -1634,14 +1659,21 @@ used. Bit 6 (0x40) of the message type indicates MOQPACK format:<a href="#sectio
 <p id="section-5.1-3">For example:
 - SUBSCRIBE standard = 0x03
 - SUBSCRIBE MOQPACK = 0x43<a href="#section-5.1-3" class="pilcrow">¶</a></p>
-<p id="section-5.1-4">When MOQPACK is negotiated, endpoints <span class="bcp14">MUST</span> accept both standard and MOQPACK
+<p id="section-5.1-4">All MOQPACK message types listed in this document are reserved in the MOQT
+message type registry and <span class="bcp14">MUST NOT</span> be used for other purposes.<a href="#section-5.1-4" class="pilcrow">¶</a></p>
+<p id="section-5.1-5">When MOQPACK is negotiated, endpoints <span class="bcp14">MUST</span> accept both standard and MOQPACK
 formats for all applicable messages. An endpoint <span class="bcp14">MAY</span> send either format, but
-<span class="bcp14">SHOULD</span> prefer MOQPACK format to benefit from compression.<a href="#section-5.1-4" class="pilcrow">¶</a></p>
-<p id="section-5.1-5">When MOQPACK is NOT negotiated, endpoints <span class="bcp14">MUST NOT</span> send MOQPACK format messages
-and <span class="bcp14">MUST</span> close the session with PROTOCOL_VIOLATION if they receive one.<a href="#section-5.1-5" class="pilcrow">¶</a></p>
-<p id="section-5.1-6">In MOQPACK format, Track Namespace, Track Name, and Parameters are moved into a
+<span class="bcp14">SHOULD</span> prefer MOQPACK format to benefit from compression.<a href="#section-5.1-5" class="pilcrow">¶</a></p>
+<p id="section-5.1-6">When MOQPACK is NOT negotiated, endpoints <span class="bcp14">MUST NOT</span> send MOQPACK format messages
+and <span class="bcp14">MUST</span> close the session with PROTOCOL_VIOLATION if they receive one.<a href="#section-5.1-6" class="pilcrow">¶</a></p>
+<p id="section-5.1-7">In MOQPACK format, Track Namespace, Track Name, and Parameters are moved into a
 QPACK Compressed Block. Other message-specific fields including Properties
-remain unchanged.<a href="#section-5.1-6" class="pilcrow">¶</a></p>
+remain unchanged.<a href="#section-5.1-7" class="pilcrow">¶</a></p>
+<p id="section-5.1-8">When the Compressed Block is the last field in the message, it extends to the
+end of the message payload (as determined by the message Length field) and no
+explicit Compressed Block Length is needed. When additional fields follow the
+Compressed Block (such as Properties), an explicit Compressed Block Length
+field is present to delimit the block.<a href="#section-5.1-8" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="pseudo-parameter-types">
@@ -1662,17 +1694,17 @@ track name fields in the Compressed Block:<a href="#section-5.2-1" class="pilcro
           </thead>
           <tbody>
             <tr>
-              <td class="text-left" rowspan="1" colspan="1">0x00</td>
+              <td class="text-left" rowspan="1" colspan="1">0x0A</td>
               <td class="text-left" rowspan="1" colspan="1">TRACK_NAMESPACE_ELEMENT</td>
               <td class="text-left" rowspan="1" colspan="1">Single element of a namespace tuple</td>
             </tr>
             <tr>
-              <td class="text-left" rowspan="1" colspan="1">0x01</td>
+              <td class="text-left" rowspan="1" colspan="1">0x0B</td>
               <td class="text-left" rowspan="1" colspan="1">TRACK_NAMESPACE_SET</td>
               <td class="text-left" rowspan="1" colspan="1">Full serialized namespace tuple</td>
             </tr>
             <tr>
-              <td class="text-left" rowspan="1" colspan="1">0x02</td>
+              <td class="text-left" rowspan="1" colspan="1">0x0C</td>
               <td class="text-left" rowspan="1" colspan="1">TRACK_NAME</td>
               <td class="text-left" rowspan="1" colspan="1">Track Name</td>
             </tr>
@@ -1681,6 +1713,30 @@ track name fields in the Compressed Block:<a href="#section-5.2-1" class="pilcro
 <p id="section-5.2-3">These pseudo-types use the same encoding as regular parameters: Literal with
 Static Name Reference for new values, or Indexed with Dynamic Table for
 previously-inserted values.<a href="#section-5.2-3" class="pilcrow">¶</a></p>
+<div id="tracknamespaceset-value-format">
+<section id="section-5.2.1">
+          <h4 id="name-track_namespace_set-value-f">
+<a href="#section-5.2.1" class="section-number selfRef">5.2.1. </a><a href="#name-track_namespace_set-value-f" class="section-name selfRef">TRACK_NAMESPACE_SET Value Format</a>
+          </h4>
+<p id="section-5.2.1-1">The value of a TRACK_NAMESPACE_SET field uses the standard MOQT Track Namespace
+serialization as defined in <span>[<a href="#MOQT" class="cite xref">MOQT</a>]</span>:<a href="#section-5.2.1-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.2.1-2">
+<pre>
+TRACK_NAMESPACE_SET Value {
+  Number of Track Namespace Fields (vi64),
+  Track Namespace Field (..) ...
+}
+
+Track Namespace Field {
+  Track Namespace Field Length (vi64),
+  Track Namespace Field Value (..)
+}
+</pre><a href="#section-5.2.1-2" class="pilcrow">¶</a>
+</div>
+<p id="section-5.2.1-3">Each Track Namespace Field Value <span class="bcp14">MUST</span> contain at least one byte, consistent
+with the requirement in <span>[<a href="#MOQT" class="cite xref">MOQT</a>]</span>.<a href="#section-5.2.1-3" class="pilcrow">¶</a></p>
+</section>
+</div>
 </section>
 </div>
 <div id="namespace-reconstruction">
@@ -1738,11 +1794,11 @@ appear first in the Compressed Block, followed by TRACK_NAME (if present),
 followed by parameters in increasing order of parameter type.<a href="#section-5.4-1" class="pilcrow">¶</a></p>
 <p id="section-5.4-2">Within the namespace elements section, entries appear in the order they
 contribute to the namespace tuple and are not required to be in increasing
-order of type. TRACK_NAMESPACE_ELEMENT (0x00) and TRACK_NAMESPACE_SET (0x01)
+order of type. TRACK_NAMESPACE_ELEMENT (0x0A) and TRACK_NAMESPACE_SET (0x0B)
 <span class="bcp14">MAY</span> be intermixed.<a href="#section-5.4-2" class="pilcrow">¶</a></p>
-<p id="section-5.4-3">Parameters (types 0x03 and above) <span class="bcp14">MUST</span> appear in increasing order of their
-parameter type. If parameters appear out of order, the receiver <span class="bcp14">MUST</span> close
-the session with PROTOCOL_VIOLATION.<a href="#section-5.4-3" class="pilcrow">¶</a></p>
+<p id="section-5.4-3">Parameters (excluding pseudo-parameter types) <span class="bcp14">MUST</span> appear in increasing order
+of their parameter type. If parameters appear out of order, the receiver <span class="bcp14">MUST</span>
+close the session with PROTOCOL_VIOLATION.<a href="#section-5.4-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="required-fields">
@@ -1793,7 +1849,7 @@ SUBSCRIBE Message (MOQPACK) {
 </pre><a href="#section-5.6.1-1" class="pilcrow">¶</a>
 </div>
 <p id="section-5.6.1-2">The Compressed Block contains namespace elements (TRACK_NAMESPACE_ELEMENT and/or
-TRACK_NAMESPACE_SET), TRACK_NAME (0x02), and any parameters
+TRACK_NAMESPACE_SET), TRACK_NAME (0x0C), and any parameters
 (AUTHORIZATION_TOKEN, SUBSCRIBER_PRIORITY, etc.).<a href="#section-5.6.1-2" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -2116,6 +2172,8 @@ value.<a href="#section-6.3-1" class="pilcrow">¶</a></p>
 <p id="section-6.3-3">For example:
 * Static index 0x02 represents DELIVERY_TIMEOUT
 * Static index 0x03 represents AUTHORIZATION_TOKEN
+* Static index 0x0A represents TRACK_NAMESPACE_ELEMENT
+* Static index 0x0C represents TRACK_NAME
 * Static index 0x20 represents SUBSCRIBER_PRIORITY<a href="#section-6.3-3" class="pilcrow">¶</a></p>
 <p id="section-6.3-4">This means any valid MOQT parameter type can be referenced by static index
 without requiring pre-registration in a table.<a href="#section-6.3-4" class="pilcrow">¶</a></p>
@@ -2189,8 +2247,10 @@ MOQT values. Encoders <span class="bcp14">MUST</span> set the H bit to 0 for all
 <a href="#section-6.4" class="section-number selfRef">6.4. </a><a href="#name-dynamic-table" class="section-name selfRef">Dynamic Table</a>
         </h3>
 <p id="section-6.4-1">Dynamic table entries store complete MOQT parameters (type and value).
-The entry size calculation follows <span>[<a href="#QPACK" class="cite xref">QPACK</a>]</span> Section 3.2.1, using a fixed
-name size of 4 bytes for the parameter type regardless of its encoded length.<a href="#section-6.4-1" class="pilcrow">¶</a></p>
+The entry size calculation follows <span>[<a href="#QPACK" class="cite xref">QPACK</a>]</span> Section 3.2.1: the size of an
+entry is the sum of its name size, value size, and 32 bytes of overhead.
+This extension uses a fixed name size of 4 bytes for the parameter type
+regardless of its encoded length.<a href="#section-6.4-1" class="pilcrow">¶</a></p>
 <div id="encoder-stream-instructions">
 <section id="section-6.4.1">
           <h4 id="name-encoder-stream-instructions">
@@ -2385,7 +2445,8 @@ table.<a href="#section-7.1.2-3" class="pilcrow">¶</a></p>
 withholds flow control credit until the instruction is complete. To avoid
 this, encoders <span class="bcp14">SHOULD NOT</span> write an encoder instruction unless sufficient
 stream and connection flow-control credit is available for the entire
-instruction. See <span>[<a href="#QPACK" class="cite xref">QPACK</a>]</span> Section 2.1.3.<a href="#section-7.1.3-1" class="pilcrow">¶</a></p>
+instruction. If sufficient credit is not available, encoders <span class="bcp14">SHOULD</span> use
+literal encodings instead. See <span>[<a href="#QPACK" class="cite xref">QPACK</a>]</span> Section 2.1.3.<a href="#section-7.1.3-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2649,21 +2710,21 @@ QPACK Compressed Blocks and <span class="bcp14">MUST NOT</span> appear in standa
           </thead>
           <tbody>
             <tr>
-              <td class="text-left" rowspan="1" colspan="1">0x00</td>
+              <td class="text-left" rowspan="1" colspan="1">0x0A</td>
               <td class="text-left" rowspan="1" colspan="1">TRACK_NAMESPACE_ELEMENT</td>
               <td class="text-left" rowspan="1" colspan="1">
                 <a href="#pseudo-parameter-types" class="auto internal xref">Section 5.2</a>
 </td>
             </tr>
             <tr>
-              <td class="text-left" rowspan="1" colspan="1">0x01</td>
+              <td class="text-left" rowspan="1" colspan="1">0x0B</td>
               <td class="text-left" rowspan="1" colspan="1">TRACK_NAMESPACE_SET</td>
               <td class="text-left" rowspan="1" colspan="1">
                 <a href="#pseudo-parameter-types" class="auto internal xref">Section 5.2</a>
 </td>
             </tr>
             <tr>
-              <td class="text-left" rowspan="1" colspan="1">0x02</td>
+              <td class="text-left" rowspan="1" colspan="1">0x0C</td>
               <td class="text-left" rowspan="1" colspan="1">TRACK_NAME</td>
               <td class="text-left" rowspan="1" colspan="1">
                 <a href="#pseudo-parameter-types" class="auto internal xref">Section 5.2</a>
@@ -2673,15 +2734,134 @@ QPACK Compressed Blocks and <span class="bcp14">MUST NOT</span> appear in standa
         </table>
 </section>
 </div>
-<div id="session-error-codes">
+<div id="message-types">
 <section id="section-10.4">
-        <h3 id="name-session-error-codes">
-<a href="#section-10.4" class="section-number selfRef">10.4. </a><a href="#name-session-error-codes" class="section-name selfRef">Session Error Codes</a>
+        <h3 id="name-message-types">
+<a href="#section-10.4" class="section-number selfRef">10.4. </a><a href="#name-message-types" class="section-name selfRef">Message Types</a>
         </h3>
-<p id="section-10.4-1">This document registers the following session error code in the
-"MOQT Session Error Codes" registry:<a href="#section-10.4-1" class="pilcrow">¶</a></p>
+<p id="section-10.4-1">This document reserves the following message types in the "MOQT Message
+Types" registry for use as MOQPACK-format messages:<a href="#section-10.4-1" class="pilcrow">¶</a></p>
 <table class="center" id="table-7">
           <caption><a href="#table-7" class="selfRef">Table 7</a></caption>
+<thead>
+            <tr>
+              <th class="text-left" rowspan="1" colspan="1">Message Type</th>
+              <th class="text-left" rowspan="1" colspan="1">Name</th>
+              <th class="text-left" rowspan="1" colspan="1">Specification</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x42</td>
+              <td class="text-left" rowspan="1" colspan="1">MOQPACK REQUEST_UPDATE</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <a href="#moqpack-message-formats" class="auto internal xref">Section 5.6</a>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x43</td>
+              <td class="text-left" rowspan="1" colspan="1">MOQPACK SUBSCRIBE</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <a href="#moqpack-message-formats" class="auto internal xref">Section 5.6</a>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x44</td>
+              <td class="text-left" rowspan="1" colspan="1">MOQPACK SUBSCRIBE_OK</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <a href="#moqpack-message-formats" class="auto internal xref">Section 5.6</a>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x45</td>
+              <td class="text-left" rowspan="1" colspan="1">MOQPACK REQUEST_ERROR</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <a href="#moqpack-message-formats" class="auto internal xref">Section 5.6</a>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x46</td>
+              <td class="text-left" rowspan="1" colspan="1">MOQPACK PUBLISH_NAMESPACE</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <a href="#moqpack-message-formats" class="auto internal xref">Section 5.6</a>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x47</td>
+              <td class="text-left" rowspan="1" colspan="1">MOQPACK REQUEST_OK</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <a href="#moqpack-message-formats" class="auto internal xref">Section 5.6</a>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x48</td>
+              <td class="text-left" rowspan="1" colspan="1">MOQPACK NAMESPACE</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <a href="#moqpack-message-formats" class="auto internal xref">Section 5.6</a>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x4D</td>
+              <td class="text-left" rowspan="1" colspan="1">MOQPACK TRACK_STATUS</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <a href="#moqpack-message-formats" class="auto internal xref">Section 5.6</a>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x4E</td>
+              <td class="text-left" rowspan="1" colspan="1">MOQPACK NAMESPACE_DONE</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <a href="#moqpack-message-formats" class="auto internal xref">Section 5.6</a>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x51</td>
+              <td class="text-left" rowspan="1" colspan="1">MOQPACK SUBSCRIBE_NAMESPACE</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <a href="#moqpack-message-formats" class="auto internal xref">Section 5.6</a>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x56</td>
+              <td class="text-left" rowspan="1" colspan="1">MOQPACK FETCH</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <a href="#moqpack-message-formats" class="auto internal xref">Section 5.6</a>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x58</td>
+              <td class="text-left" rowspan="1" colspan="1">MOQPACK FETCH_OK</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <a href="#moqpack-message-formats" class="auto internal xref">Section 5.6</a>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x5D</td>
+              <td class="text-left" rowspan="1" colspan="1">MOQPACK PUBLISH</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <a href="#moqpack-message-formats" class="auto internal xref">Section 5.6</a>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">0x5E</td>
+              <td class="text-left" rowspan="1" colspan="1">MOQPACK PUBLISH_OK</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <a href="#moqpack-message-formats" class="auto internal xref">Section 5.6</a>
+</td>
+            </tr>
+          </tbody>
+        </table>
+</section>
+</div>
+<div id="session-error-codes">
+<section id="section-10.5">
+        <h3 id="name-session-error-codes">
+<a href="#section-10.5" class="section-number selfRef">10.5. </a><a href="#name-session-error-codes" class="section-name selfRef">Session Error Codes</a>
+        </h3>
+<p id="section-10.5-1">This document registers the following session error code in the
+"MOQT Session Error Codes" registry:<a href="#section-10.5-1" class="pilcrow">¶</a></p>
+<table class="center" id="table-8">
+          <caption><a href="#table-8" class="selfRef">Table 8</a></caption>
 <thead>
             <tr>
               <th class="text-left" rowspan="1" colspan="1">Error Code</th>
@@ -2806,16 +2986,16 @@ name "audio" is sent as a literal rather than inserted:<a href="#appendix-B.2-1"
 <pre>
 Encoder Stream:
   Insert With Static Name Reference
-    Name Index: 0x00 (TRACK_NAMESPACE_ELEMENT)
+    Name Index: 0x0A (TRACK_NAMESPACE_ELEMENT)
     Value: "conference"
   Insert With Static Name Reference
-    Name Index: 0x00 (TRACK_NAMESPACE_ELEMENT)
+    Name Index: 0x0A (TRACK_NAMESPACE_ELEMENT)
     Value: "room42"
 </pre><a href="#appendix-B.2-2" class="pilcrow">¶</a>
 </div>
 <p id="appendix-B.2-3">Dynamic table state after insertions:<a href="#appendix-B.2-3" class="pilcrow">¶</a></p>
-<table class="center" id="table-8">
-          <caption><a href="#table-8" class="selfRef">Table 8</a></caption>
+<table class="center" id="table-9">
+          <caption><a href="#table-9" class="selfRef">Table 9</a></caption>
 <thead>
             <tr>
               <th class="text-left" rowspan="1" colspan="1">Absolute Index</th>
@@ -2845,16 +3025,15 @@ Encoder Stream:
 <div class="alignLeft art-text artwork" id="appendix-B.2-6">
 <pre>
 SUBSCRIBE Message:
-  Type: 0x3
+  Type: 0x43
   Request ID: 1
   Track Alias: 100
-  Compressed Block Length: 12
   Compressed Block:
     Required Insert Count: 3 (encoded per RFC 9204 Section 4.5.1.1)
     Base: Sign=0, Delta=0 (Base = Required Insert Count = 3)
     Indexed Field Line (Dynamic, relative index 1)  // abs 1 = "conference"
     Indexed Field Line (Dynamic, relative index 0)  // abs 2 = "room42"
-    Literal Field Line (Static Name 0x02, Value "audio")  // TRACK_NAME
+    Literal Field Line (Static Name 0x0C, Value "audio")  // TRACK_NAME
     Indexed Field Line (Dynamic, relative index 2)  // abs 0 = AUTH_TOKEN
 </pre><a href="#appendix-B.2-6" class="pilcrow">¶</a>
 </div>
@@ -2884,7 +3063,7 @@ track name is sent as literal again:<a href="#appendix-B.3-1" class="pilcrow">¶
 <div class="alignLeft art-text artwork" id="appendix-B.3-2">
 <pre>
 SUBSCRIBE Message:
-  Type: 0x3
+  Type: 0x43
   Request ID: 2
   Track Alias: 101
   Compressed Block:
@@ -2892,7 +3071,7 @@ SUBSCRIBE Message:
     Base: Sign=0, Delta=0
     Indexed Field Line (Dynamic, relative index 1)  // "conference"
     Indexed Field Line (Dynamic, relative index 0)  // "room42"
-    Literal Field Line (Static Name 0x02, Value "audio")  // TRACK_NAME
+    Literal Field Line (Static Name 0x0C, Value "audio")  // TRACK_NAME
     Indexed Field Line (Dynamic, relative index 2)  // AUTH_TOKEN
 </pre><a href="#appendix-B.3-2" class="pilcrow">¶</a>
 </div>
@@ -2909,7 +3088,7 @@ stream instructions needed:<a href="#appendix-B.4-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="appendix-B.4-2">
 <pre>
 SUBSCRIBE Message:
-  Type: 0x3
+  Type: 0x43
   Request ID: 3
   Track Alias: 102
   Compressed Block:
@@ -2917,48 +3096,11 @@ SUBSCRIBE Message:
     Base: Sign=0, Delta=0
     Indexed Field Line (Dynamic, relative index 1)  // "conference"
     Indexed Field Line (Dynamic, relative index 0)  // "room42"
-    Literal Field Line (Static Name 0x02, Value "video")  // TRACK_NAME
+    Literal Field Line (Static Name 0x0C, Value "video")  // TRACK_NAME
     Indexed Field Line (Dynamic, relative index 2)  // AUTH_TOKEN
 </pre><a href="#appendix-B.4-2" class="pilcrow">¶</a>
 </div>
 <p id="appendix-B.4-3">The namespace elements are reused; the different track name is sent as a literal.<a href="#appendix-B.4-3" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="total-savings">
-<section id="appendix-B.5">
-        <h3 id="name-total-savings">
-<a href="#name-total-savings" class="section-name selfRef">Total Savings</a>
-        </h3>
-<table class="center" id="table-9">
-          <caption><a href="#table-9" class="selfRef">Table 9</a></caption>
-<thead>
-            <tr>
-              <th class="text-left" rowspan="1" colspan="1">Encoding</th>
-              <th class="text-left" rowspan="1" colspan="1">Sub 1</th>
-              <th class="text-left" rowspan="1" colspan="1">Sub 2</th>
-              <th class="text-left" rowspan="1" colspan="1">Sub 3</th>
-              <th class="text-left" rowspan="1" colspan="1">Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="text-left" rowspan="1" colspan="1">Uncompressed</td>
-              <td class="text-left" rowspan="1" colspan="1">526</td>
-              <td class="text-left" rowspan="1" colspan="1">526</td>
-              <td class="text-left" rowspan="1" colspan="1">526</td>
-              <td class="text-left" rowspan="1" colspan="1">1578</td>
-            </tr>
-            <tr>
-              <td class="text-left" rowspan="1" colspan="1">MOQPACK</td>
-              <td class="text-left" rowspan="1" colspan="1">32*</td>
-              <td class="text-left" rowspan="1" colspan="1">12</td>
-              <td class="text-left" rowspan="1" colspan="1">12</td>
-              <td class="text-left" rowspan="1" colspan="1">56</td>
-            </tr>
-          </tbody>
-        </table>
-<p id="appendix-B.5-2">* Includes encoder stream insertions for namespace elements (~20 bytes)<a href="#appendix-B.5-2" class="pilcrow">¶</a></p>
-<p id="appendix-B.5-3">Savings: ~96% reduction in namespace/name/token overhead.<a href="#appendix-B.5-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -3040,15 +3182,15 @@ SUBSCRIBE Message:
           </thead>
           <tbody>
             <tr>
-              <td class="text-left" rowspan="1" colspan="1">0x00</td>
+              <td class="text-left" rowspan="1" colspan="1">0x0A</td>
               <td class="text-left" rowspan="1" colspan="1">TRACK_NAMESPACE_ELEMENT</td>
             </tr>
             <tr>
-              <td class="text-left" rowspan="1" colspan="1">0x01</td>
+              <td class="text-left" rowspan="1" colspan="1">0x0B</td>
               <td class="text-left" rowspan="1" colspan="1">TRACK_NAMESPACE_SET</td>
             </tr>
             <tr>
-              <td class="text-left" rowspan="1" colspan="1">0x02</td>
+              <td class="text-left" rowspan="1" colspan="1">0x0C</td>
               <td class="text-left" rowspan="1" colspan="1">TRACK_NAME</td>
             </tr>
           </tbody>
@@ -3147,8 +3289,111 @@ SUBSCRIBE Message:
 </div>
 </section>
 </div>
-<div id="authors-addresses">
+<div id="qpack-library-adaptation-notes">
 <section id="appendix-D">
+      <h2 id="name-qpack-library-adaptation-no">
+<a href="#name-qpack-library-adaptation-no" class="section-name selfRef">QPACK Library Adaptation Notes</a>
+      </h2>
+<p id="appendix-D-1">This appendix summarizes the modifications needed to use a standard QPACK
+library (designed for HTTP/3) with this extension.<a href="#appendix-D-1" class="pilcrow">¶</a></p>
+<div id="static-table">
+<section id="appendix-D.1">
+        <h3 id="name-static-table">
+<a href="#name-static-table" class="section-name selfRef">Static Table</a>
+        </h3>
+<p id="appendix-D.1-1">Standard QPACK libraries include a static table of 99 predefined HTTP header
+(name, value) pairs. For MOQPACK, the static table is reinterpreted: the
+static table index directly represents the MOQT parameter type integer, and
+there are no predefined values. Implementations need to replace or bypass the
+HTTP static table. A simple approach is to treat the static table as a
+mapping from index to a 4-byte big-endian representation of the parameter
+type, with no predefined value.<a href="#appendix-D.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="prohibited-encodings">
+<section id="appendix-D.2">
+        <h3 id="name-prohibited-encodings">
+<a href="#name-prohibited-encodings" class="section-name selfRef">Prohibited Encodings</a>
+        </h3>
+<p id="appendix-D.2-1">Standard QPACK supports all field line representations. MOQPACK prohibits
+several (see <a href="#field-line-interpretation" class="auto internal xref">Section 6.3.1</a>). Implementations should configure
+the encoder to only emit:<a href="#appendix-D.2-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="appendix-D.2-2.1">
+            <p id="appendix-D.2-2.1.1">Literal Field Line With Static Name Reference (for new parameter values)<a href="#appendix-D.2-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-D.2-2.2">
+            <p id="appendix-D.2-2.2.1">Indexed Field Line with Dynamic Table (for previously-inserted values)<a href="#appendix-D.2-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-D.2-2.3">
+            <p id="appendix-D.2-2.3.1">Indexed Field Line with Post-Base Index<a href="#appendix-D.2-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="appendix-D.2-3">And should configure the decoder to reject:<a href="#appendix-D.2-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="appendix-D.2-4.1">
+            <p id="appendix-D.2-4.1.1">Indexed Field Line with Static Table<a href="#appendix-D.2-4.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-D.2-4.2">
+            <p id="appendix-D.2-4.2.1">Literal Field Line With Dynamic Name Reference<a href="#appendix-D.2-4.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-D.2-4.3">
+            <p id="appendix-D.2-4.3.1">Literal Field Line with Post-Base Name Reference<a href="#appendix-D.2-4.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-D.2-4.4">
+            <p id="appendix-D.2-4.4.1">Literal Field Line With Literal Name<a href="#appendix-D.2-4.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-D.2-4.5">
+            <p id="appendix-D.2-4.5.1">Huffman-encoded string literals (H=1)<a href="#appendix-D.2-4.5.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="encoder-stream-instructions-1">
+<section id="appendix-D.3">
+        <h3 id="name-encoder-stream-instructions-2">
+<a href="#name-encoder-stream-instructions-2" class="section-name selfRef">Encoder Stream Instructions</a>
+        </h3>
+<p id="appendix-D.3-1">Only two insertion forms are used:<a href="#appendix-D.3-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="appendix-D.3-2.1">
+            <p id="appendix-D.3-2.1.1">Insert With Static Name Reference<a href="#appendix-D.3-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-D.3-2.2">
+            <p id="appendix-D.3-2.2.1">Duplicate<a href="#appendix-D.3-2.2.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="appendix-D.3-3">Insert With Dynamic Name Reference and Insert With Literal Name are
+not used.<a href="#appendix-D.3-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="decoder-stream-request-ids-instead-of-stream-ids">
+<section id="appendix-D.4">
+        <h3 id="name-decoder-stream-request-ids-">
+<a href="#name-decoder-stream-request-ids-" class="section-name selfRef">Decoder Stream: Request IDs Instead of Stream IDs</a>
+        </h3>
+<p id="appendix-D.4-1">Standard QPACK decoder instructions (Section Acknowledgment, Stream
+Cancellation) carry QUIC stream IDs. In MOQPACK, these carry MOQT
+Request IDs instead (see <a href="#decoder-instructions-with-request-ids" class="auto internal xref">Section 7.2.1</a>).
+The encoder needs to track Compressed Blocks per Request ID rather than
+per stream ID. This also enables MOQPACK to operate over WebTransport
+where QUIC stream IDs are not exposed to the application.<a href="#appendix-D.4-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="entry-size-calculation">
+<section id="appendix-D.5">
+        <h3 id="name-entry-size-calculation">
+<a href="#name-entry-size-calculation" class="section-name selfRef">Entry Size Calculation</a>
+        </h3>
+<p id="appendix-D.5-1">The name size for all entries is fixed at 4 bytes (rather than the
+variable-length header name strings used in HTTP). The 32-byte per-entry
+overhead from <span>[<a href="#QPACK" class="cite xref">QPACK</a>]</span> Section 3.2.1 still applies.<a href="#appendix-D.5-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="authors-addresses">
+<section id="appendix-E">
       <h2 id="name-authors-address">
 <a href="#name-authors-address" class="section-name selfRef">Author's Address</a>
       </h2>
