@@ -335,12 +335,12 @@ PUBLISH Message (MOQPACK) {
   Track Alias (vi64),
   Compressed Block Length (vi64),
   Compressed Block (..),
-  Track Extensions (..)
+  Properties (..)
 }
 ~~~
 
 The Compressed Block contains namespace elements, TRACK_NAME, and any
-parameters.  Track Extensions remain outside the compressed block and use
+parameters.  Properties remain outside the compressed block and use
 standard MOQT encoding, including IMMUTABLE_EXTENSIONS which are not QPACK
 compressed.
 
@@ -433,20 +433,53 @@ TRACK_STATUS uses the same format as SUBSCRIBE but with type 0x4D.
 The Compressed Block contains namespace elements, TRACK_NAME, and any applicable
 parameters.
 
+### SUBSCRIBE_OK
+
+~~~
+SUBSCRIBE_OK Message (MOQPACK) {
+  Type (vi64) = 0x44,
+  Length (16),
+  Request ID (vi64),
+  Compressed Block Length (vi64),
+  Compressed Block (..),
+  Properties (..)
+}
+~~~
+
+The Compressed Block contains only parameters. Properties remain outside the
+Compressed Block and use standard MOQT encoding. The Compressed Block Length
+is required because Properties consume the remainder of the message.
+
+### FETCH_OK
+
+~~~
+FETCH_OK Message (MOQPACK) {
+  Type (vi64) = 0x58,
+  Length (16),
+  Request ID (vi64),
+  Compressed Block Length (vi64),
+  Compressed Block (..),
+  Properties (..)
+}
+~~~
+
+The Compressed Block contains only parameters. Properties remain outside the
+Compressed Block and use standard MOQT encoding. The Compressed Block Length
+is required because Properties consume the remainder of the message.
+
 ### Parameter-Only Messages
 
-The following messages have parameters but no namespace or track name fields.
-When MOQPACK is negotiated, these messages MAY use MOQPACK format with the
-0x40 flag bit set. The MOQPACK format replaces the standard Parameters field
-with a Compressed Block:
+The following messages have parameters but no namespace, track name, or
+trailing properties. When MOQPACK is negotiated, these messages MAY use
+MOQPACK format with the 0x40 flag bit set. The MOQPACK format replaces the
+standard Parameters field with a Compressed Block that consumes the remainder
+of the message:
 
 | Standard Type | MOQPACK Type | Message |
 |---------------|--------------|---------|
 | 0x02 | 0x42 | REQUEST_UPDATE |
-| 0x04 | 0x44 | SUBSCRIBE_OK |
 | 0x05 | 0x45 | REQUEST_ERROR |
 | 0x07 | 0x47 | REQUEST_OK |
-| 0x18 | 0x58 | FETCH_OK |
 | 0x1E | 0x5E | PUBLISH_OK |
 
 ~~~
@@ -806,10 +839,10 @@ limits causes a session error.
 
 # IANA Considerations
 
-## Setup Parameter Types
+## Setup Option Types
 
-This document registers the following Setup Parameter Types in the
-"MOQT Setup Parameters" registry:
+This document registers the following Setup Option Types in the
+"MOQT Setup Options" registry:
 
 | Parameter Type | Parameter Name | Specification |
 |----------------|----------------|---------------|
@@ -993,7 +1026,7 @@ Savings: ~96% reduction in namespace/name/token overhead.
 
 This appendix summarizes all code points defined or used by this extension.
 
-## Setup Parameters
+## Setup Options
 {:numbered="false"}
 
 | Type | Name |
