@@ -40,21 +40,20 @@ informative:
 --- abstract
 
 This document defines an extension to Media over QUIC Transport (MOQT) that
-enables QPACK compression for message parameters. By leveraging QPACK's dynamic
-table, this extension significantly reduces the overhead of repeated parameter
+enables QPACK compression for contol messages. By leveraging QPACK's dynamic
+table, this extension significantly reduces the overhead of repeated
 values such as track names and authorization tokens, improving efficiency for
-sessions with many subscriptions or frequent parameter reuse.
+sessions with many subscriptions or frequent redundant values.
 
 --- middle
 
 
 # Introduction
 
-Media over QUIC Transport (MOQT) {{MOQT}} uses message parameters to convey
-optional information in control messages. Some message fields and parameters can
-contain large values that are repeated across many messages within a
-session. The base MOQT specification transmits these parameters in full each
-time they appear, which can result in significant overhead.
+Media over QUIC Transport (MOQT) {{MOQT}} control message message fields and
+parameters can contain large values that are repeated across many messages
+within a session. The base MOQT specification transmits this information in full
+each time it appears, which can result in significant overhead.
 
 This document defines an extension that uses QPACK {{QPACK}} to compress MOQT
 message parameters. QPACK provides:
@@ -64,8 +63,8 @@ message parameters. QPACK provides:
 * Stream blocking semantics suitable for QUIC
 
 By treating MOQT parameters as QPACK field lines, this extension enables
-efficient compression of repeated parameter values while maintaining
-compatibility with QPACK's existing infrastructure.
+efficient compression of repeated values while maintaining compatibility with
+QPACK's existing infrastructure.
 
 ## Motivation
 
@@ -87,12 +86,12 @@ The terms "endpoint", "session", "publisher", and "subscriber" are defined in
 # Extension Negotiation
 
 This extension is negotiated during MOQT session establishment using Setup
-Parameters. CLIENT_SETUP and SERVER_SETUP messages always use standard MOQT
+Options. CLIENT_SETUP and SERVER_SETUP messages always use standard MOQT
 encoding and are never MOQPACK compressed.
 
 ## MOQT_QPACK_MAX_TABLE_CAPACITY
 
-The MOQT_QPACK_MAX_TABLE_CAPACITY setup parameter (Parameter Type 0x10)
+The MOQT_QPACK_MAX_TABLE_CAPACITY setup option (Option Type 0x10)
 specifies the maximum size in bytes of the QPACK dynamic table the endpoint
 is willing to maintain for decoding. This corresponds to
 SETTINGS_QPACK_MAX_TABLE_CAPACITY in HTTP/3.
@@ -101,12 +100,12 @@ The value is encoded as a variable-length integer. The default value is 0.
 
 QPACK compression is enabled when both endpoints send this parameter with a
 value greater than 0. If either endpoint omits this parameter or sends a
-value of 0, QPACK compression MUST NOT be used and messages use the standard
-MOQT format.
+value of 0, QPACK compression MUST NOT be used and control messages use the
+standard MOQT format.
 
 ## MOQT_QPACK_BLOCKED_STREAMS
 
-The MOQT_QPACK_BLOCKED_STREAMS setup parameter (Parameter Type 0x11) specifies
+The MOQT_QPACK_BLOCKED_STREAMS setup option (Option Type 0x11) specifies
 the maximum number of streams that can be blocked waiting for dynamic table
 updates. This corresponds to SETTINGS_QPACK_BLOCKED_STREAMS in HTTP/3.
 
@@ -114,12 +113,12 @@ The value is encoded as a variable-length integer. The default value is 0,
 which prevents any stream from being blocked. When set to 0, encoders MUST NOT
 reference dynamic table entries that have not been acknowledged.
 
-This parameter is only meaningful when QPACK compression is enabled.
+This option is only meaningful when QPACK compression is enabled.
 
-## MOQT_QPACK_INDEX_SETUP_AUTH
+## MOQT_QPACK_INDEX_SETUP_AUTH {#implicit-dynamic-table-seeding}
 
-The MOQT_QPACK_INDEX_SETUP_AUTH setup parameter (Parameter Type 0x12) controls
-whether AUTHORIZATION TOKEN parameters from the Setup messages are implicitly
+The MOQT_QPACK_INDEX_SETUP_AUTH setup option (Option Type 0x12) controls
+whether AUTHORIZATION TOKEN options from the Setup messages are implicitly
 inserted into the dynamic table.
 
 The value is encoded as a variable-length integer:
@@ -127,48 +126,24 @@ The value is encoded as a variable-length integer:
 - 0: Do not implicitly insert setup auth tokens (default)
 - 1: Implicitly insert setup auth tokens
 
-When either endpoint omits this parameter or sends 0, implicit insertion does
-not occur and endpoints that wish to reference auth tokens must explicitly
+When either endpoint omits this option or sends 0, implicit insertion does
+not occur and endpoints that wish to reference auth tokens explicitly
 insert them via the encoder stream.
 
 This allows endpoints to authenticate the connection via setup auth tokens
 while still using Never-Indexed Literals for subsequent auth token references
 if desired.
 
-### Implicit Dynamic Table Seeding
-
 When both endpoints send MOQT_QPACK_INDEX_SETUP_AUTH with value 1, any
-AUTHORIZATION TOKEN parameters from the setup messages are implicitly inserted
+AUTHORIZATION TOKEN options from the Setup messages are implicitly inserted
 into the dynamic table without requiring encoder stream instructions.
 
-The implicit insertion order is:
-
-1. Tokens from CLIENT_SETUP, in the order they appeared, are inserted into
-   the client's encoder dynamic table (indices 0, 1, 2, ...)
-2. Tokens from SERVER_SETUP, in the order they appeared, are inserted into
-   the server's encoder dynamic table (indices 0, 1, 2, ...)
-
-Each endpoint's decoder knows the peer's setup tokens and can decode
-references to these implicit entries.
+Tokens from Setup message, in the order they appeared, are inserted into
+the receiver's encoder dynamic table (indices 0, 1, 2, ...)
 
 This allows the client to immediately reference its setup auth token in
-the first SUBSCRIBE message using a dynamic table reference, without any
-encoder stream round-trip. For example, to reference just the auth token
-(assuming namespace and track name are sent separately):
-
-~~~
-CLIENT_SETUP:
-  MOQT_QPACK_INDEX_SETUP_AUTH: 1
-  AUTHORIZATION_TOKEN: Token Type 1, "eyJhbG..."
-
-[MOQPACK negotiated, both endpoints sent INDEX_SETUP_AUTH=1]
-
-Dynamic table (implicit):
-  index 0: AUTH_TOKEN
-
-SUBSCRIBE Compressed Block (partial):
-  Indexed Field Line (Dynamic, relative index 0)  // References setup token
-~~~
+the first SUBSCRIBE message using a dynamic table reference, without
+resending it on the encoder stream.
 
 The implicit entries count against the MOQT_QPACK_MAX_TABLE_CAPACITY limit.
 If the implicit entries would exceed the peer's advertised capacity, the
@@ -342,7 +317,6 @@ SUBSCRIBE Message (MOQPACK) {
   Length (16),
   Request ID (vi64),
   Track Alias (vi64),
-  Compressed Block Length (vi64),
   Compressed Block (..)
 }
 ~~~
@@ -376,7 +350,6 @@ compressed.
 Standalone Fetch (MOQPACK) {
   Start Location (Location),
   End Location (Location),
-  Compressed Block Length (vi64),
   Compressed Block (..)
 }
 
@@ -384,7 +357,6 @@ Joining Fetch (MOQPACK) {
   Joining Request ID (vi64),
   Join Type (vi64),
   Joining Start (vi64),
-  Compressed Block Length (vi64),
   Compressed Block (..)
 }
 
@@ -410,7 +382,6 @@ SUBSCRIBE_NAMESPACE Message (MOQPACK) {
   Length (16),
   Request ID (vi64),
   Subscribe Options (vi64),
-  Compressed Block Length (vi64),
   Compressed Block (..)
 }
 ~~~
@@ -424,7 +395,6 @@ PUBLISH_NAMESPACE Message (MOQPACK) {
   Type (vi64) = 0x46,
   Length (16),
   Request ID (vi64),
-  Compressed Block Length (vi64),
   Compressed Block (..)
 }
 ~~~
@@ -437,7 +407,6 @@ The Compressed Block contains namespace elements and any parameters.
 NAMESPACE Message (MOQPACK) {
   Type (vi64) = 0x48,
   Length (16),
-  Compressed Block Length (vi64),
   Compressed Block (..)
 }
 ~~~
@@ -451,7 +420,6 @@ no parameters.
 NAMESPACE_DONE Message (MOQPACK) {
   Type (vi64) = 0x4E,
   Length (16),
-  Compressed Block Length (vi64),
   Compressed Block (..)
 }
 ~~~
@@ -486,7 +454,6 @@ Parameter-Only Message (MOQPACK) {
   Type (vi64) = <standard type> | 0x40,
   Length (16),
   [Message-specific fields...],
-  Compressed Block Length (vi64),
   Compressed Block (..)
 }
 ~~~
@@ -688,7 +655,7 @@ MOQPACK_DECOMPRESSION_FAILED.
 
 The total size of the decompressed message fields (the sum of all parameter
 values, namespace elements, and track name, excluding interior length fields)
-MUST NOT exceed 65536 bytes. If a decompressed message exceeds this limit,
+MUST NOT exceed 65535 bytes. If a decompressed message exceeds this limit,
 the receiver MUST close the session with MOQPACK_DECOMPRESSION_FAILED.
 
 # Dynamic Table Management
@@ -808,12 +775,6 @@ session termination. The specific mapping is:
 | QPACK_DECOMPRESSION_FAILED | MOQPACK_DECOMPRESSION_FAILED |
 | QPACK_ENCODER_STREAM_ERROR | PROTOCOL_VIOLATION |
 | QPACK_DECODER_STREAM_ERROR | PROTOCOL_VIOLATION |
-
-## Stream Errors
-
-If a QPACK encoder or decoder stream is reset or closed before the MOQT
-session ends, the receiving endpoint MUST close the session with
-PROTOCOL_VIOLATION.
 
 
 # Security Considerations
@@ -981,7 +942,6 @@ SUBSCRIBE Message:
   Type: 0x3
   Request ID: 2
   Track Alias: 101
-  Compressed Block Length: 12
   Compressed Block:
     Required Insert Count: 3
     Base: Sign=0, Delta=0
@@ -1004,7 +964,6 @@ SUBSCRIBE Message:
   Type: 0x3
   Request ID: 3
   Track Alias: 102
-  Compressed Block Length: 12
   Compressed Block:
     Required Insert Count: 3
     Base: Sign=0, Delta=0
