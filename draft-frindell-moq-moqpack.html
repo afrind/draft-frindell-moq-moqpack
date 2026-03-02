@@ -1241,7 +1241,13 @@ sessions with many subscriptions or frequent redundant values.<a href="#section-
                     <p id="section-toc.1-1.5.2.6.2.8.1"><a href="#section-5.6.8" class="auto internal xref">5.6.8</a>.  <a href="#name-track_status" class="internal xref">TRACK_STATUS</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.6.2.9">
-                    <p id="section-toc.1-1.5.2.6.2.9.1"><a href="#section-5.6.9" class="auto internal xref">5.6.9</a>.  <a href="#name-parameter-only-messages" class="internal xref">Parameter-Only Messages</a></p>
+                    <p id="section-toc.1-1.5.2.6.2.9.1"><a href="#section-5.6.9" class="auto internal xref">5.6.9</a>.  <a href="#name-subscribe_ok" class="internal xref">SUBSCRIBE_OK</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.6.2.10">
+                    <p id="section-toc.1-1.5.2.6.2.10.1"><a href="#section-5.6.10" class="auto internal xref">5.6.10</a>. <a href="#name-fetch_ok" class="internal xref">FETCH_OK</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.6.2.11">
+                    <p id="section-toc.1-1.5.2.6.2.11.1"><a href="#section-5.6.11" class="auto internal xref">5.6.11</a>. <a href="#name-parameter-only-messages" class="internal xref">Parameter-Only Messages</a></p>
 </li>
                 </ul>
 </li>
@@ -1339,7 +1345,7 @@ sessions with many subscriptions or frequent redundant values.<a href="#section-
             <p id="section-toc.1-1.10.1"><a href="#section-10" class="auto internal xref">10</a>. <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.1">
-                <p id="section-toc.1-1.10.2.1.1"><a href="#section-10.1" class="auto internal xref">10.1</a>.  <a href="#name-setup-parameter-types" class="internal xref">Setup Parameter Types</a></p>
+                <p id="section-toc.1-1.10.2.1.1"><a href="#section-10.1" class="auto internal xref">10.1</a>.  <a href="#name-setup-option-types" class="internal xref">Setup Option Types</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.2">
                 <p id="section-toc.1-1.10.2.2.1"><a href="#section-10.2" class="auto internal xref">10.2</a>.  <a href="#name-unidirectional-stream-types" class="internal xref">Unidirectional Stream Types</a></p>
@@ -1390,7 +1396,7 @@ sessions with many subscriptions or frequent redundant values.<a href="#section-
             <p id="section-toc.1-1.14.1"><a href="#appendix-C" class="auto internal xref"></a><a href="#name-code-point-summary" class="internal xref">Code Point Summary</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14.2.1">
-                <p id="section-toc.1-1.14.2.1.1"><a href="#appendix-C.1" class="auto internal xref"></a><a href="#name-setup-parameters" class="internal xref">Setup Parameters</a></p>
+                <p id="section-toc.1-1.14.2.1.1"><a href="#appendix-C.1" class="auto internal xref"></a><a href="#name-setup-options" class="internal xref">Setup Options</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14.2.2">
                 <p id="section-toc.1-1.14.2.2.1"><a href="#appendix-C.2" class="auto internal xref"></a><a href="#name-stream-types-2" class="internal xref">Stream Types</a></p>
@@ -1805,12 +1811,12 @@ PUBLISH Message (MOQPACK) {
   Track Alias (vi64),
   Compressed Block Length (vi64),
   Compressed Block (..),
-  Track Extensions (..)
+  Properties (..)
 }
 </pre><a href="#section-5.6.2-1" class="pilcrow">¶</a>
 </div>
 <p id="section-5.6.2-2">The Compressed Block contains namespace elements, TRACK_NAME, and any
-parameters.  Track Extensions remain outside the compressed block and use
+parameters.  Properties remain outside the compressed block and use
 standard MOQT encoding, including IMMUTABLE_EXTENSIONS which are not QPACK
 compressed.<a href="#section-5.6.2-2" class="pilcrow">¶</a></p>
 </section>
@@ -1933,15 +1939,60 @@ The Compressed Block contains namespace elements, TRACK_NAME, and any applicable
 parameters.<a href="#section-5.6.8-1" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="parameter-only-messages">
+<div id="subscribeok">
 <section id="section-5.6.9">
-          <h4 id="name-parameter-only-messages">
-<a href="#section-5.6.9" class="section-number selfRef">5.6.9. </a><a href="#name-parameter-only-messages" class="section-name selfRef">Parameter-Only Messages</a>
+          <h4 id="name-subscribe_ok">
+<a href="#section-5.6.9" class="section-number selfRef">5.6.9. </a><a href="#name-subscribe_ok" class="section-name selfRef">SUBSCRIBE_OK</a>
           </h4>
-<p id="section-5.6.9-1">The following messages have parameters but no namespace or track name fields.
-When MOQPACK is negotiated, these messages <span class="bcp14">MAY</span> use MOQPACK format with the
-0x40 flag bit set. The MOQPACK format replaces the standard Parameters field
-with a Compressed Block:<a href="#section-5.6.9-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.6.9-1">
+<pre>
+SUBSCRIBE_OK Message (MOQPACK) {
+  Type (vi64) = 0x44,
+  Length (16),
+  Request ID (vi64),
+  Compressed Block Length (vi64),
+  Compressed Block (..),
+  Properties (..)
+}
+</pre><a href="#section-5.6.9-1" class="pilcrow">¶</a>
+</div>
+<p id="section-5.6.9-2">The Compressed Block contains only parameters. Properties remain outside the
+Compressed Block and use standard MOQT encoding. The Compressed Block Length
+is required because Properties consume the remainder of the message.<a href="#section-5.6.9-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="fetchok">
+<section id="section-5.6.10">
+          <h4 id="name-fetch_ok">
+<a href="#section-5.6.10" class="section-number selfRef">5.6.10. </a><a href="#name-fetch_ok" class="section-name selfRef">FETCH_OK</a>
+          </h4>
+<div class="alignLeft art-text artwork" id="section-5.6.10-1">
+<pre>
+FETCH_OK Message (MOQPACK) {
+  Type (vi64) = 0x58,
+  Length (16),
+  Request ID (vi64),
+  Compressed Block Length (vi64),
+  Compressed Block (..),
+  Properties (..)
+}
+</pre><a href="#section-5.6.10-1" class="pilcrow">¶</a>
+</div>
+<p id="section-5.6.10-2">The Compressed Block contains only parameters. Properties remain outside the
+Compressed Block and use standard MOQT encoding. The Compressed Block Length
+is required because Properties consume the remainder of the message.<a href="#section-5.6.10-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="parameter-only-messages">
+<section id="section-5.6.11">
+          <h4 id="name-parameter-only-messages">
+<a href="#section-5.6.11" class="section-number selfRef">5.6.11. </a><a href="#name-parameter-only-messages" class="section-name selfRef">Parameter-Only Messages</a>
+          </h4>
+<p id="section-5.6.11-1">The following messages have parameters but no namespace, track name, or
+trailing properties. When MOQPACK is negotiated, these messages <span class="bcp14">MAY</span> use
+MOQPACK format with the 0x40 flag bit set. The MOQPACK format replaces the
+standard Parameters field with a Compressed Block that consumes the remainder
+of the message:<a href="#section-5.6.11-1" class="pilcrow">¶</a></p>
 <table class="center" id="table-2">
             <caption><a href="#table-2" class="selfRef">Table 2</a></caption>
 <thead>
@@ -1958,11 +2009,6 @@ with a Compressed Block:<a href="#section-5.6.9-1" class="pilcrow">¶</a></p>
                 <td class="text-left" rowspan="1" colspan="1">REQUEST_UPDATE</td>
               </tr>
               <tr>
-                <td class="text-left" rowspan="1" colspan="1">0x04</td>
-                <td class="text-left" rowspan="1" colspan="1">0x44</td>
-                <td class="text-left" rowspan="1" colspan="1">SUBSCRIBE_OK</td>
-              </tr>
-              <tr>
                 <td class="text-left" rowspan="1" colspan="1">0x05</td>
                 <td class="text-left" rowspan="1" colspan="1">0x45</td>
                 <td class="text-left" rowspan="1" colspan="1">REQUEST_ERROR</td>
@@ -1973,18 +2019,13 @@ with a Compressed Block:<a href="#section-5.6.9-1" class="pilcrow">¶</a></p>
                 <td class="text-left" rowspan="1" colspan="1">REQUEST_OK</td>
               </tr>
               <tr>
-                <td class="text-left" rowspan="1" colspan="1">0x18</td>
-                <td class="text-left" rowspan="1" colspan="1">0x58</td>
-                <td class="text-left" rowspan="1" colspan="1">FETCH_OK</td>
-              </tr>
-              <tr>
                 <td class="text-left" rowspan="1" colspan="1">0x1E</td>
                 <td class="text-left" rowspan="1" colspan="1">0x5E</td>
                 <td class="text-left" rowspan="1" colspan="1">PUBLISH_OK</td>
               </tr>
             </tbody>
           </table>
-<div class="alignLeft art-text artwork" id="section-5.6.9-3">
+<div class="alignLeft art-text artwork" id="section-5.6.11-3">
 <pre>
 Parameter-Only Message (MOQPACK) {
   Type (vi64) = &lt;standard type&gt; | 0x40,
@@ -1992,10 +2033,10 @@ Parameter-Only Message (MOQPACK) {
   [Message-specific fields...],
   Compressed Block (..)
 }
-</pre><a href="#section-5.6.9-3" class="pilcrow">¶</a>
+</pre><a href="#section-5.6.11-3" class="pilcrow">¶</a>
 </div>
-<p id="section-5.6.9-4">The Compressed Block contains only parameters (no pseudo-parameter types).
-Message-specific fields (Request ID, error codes, etc.) remain unchanged.<a href="#section-5.6.9-4" class="pilcrow">¶</a></p>
+<p id="section-5.6.11-4">The Compressed Block contains only parameters (no pseudo-parameter types).
+Message-specific fields (Request ID, error codes, etc.) remain unchanged.<a href="#section-5.6.11-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2512,13 +2553,13 @@ limits causes a session error.<a href="#section-9.3-1" class="pilcrow">¶</a></p
       <h2 id="name-iana-considerations">
 <a href="#section-10" class="section-number selfRef">10. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
       </h2>
-<div id="setup-parameter-types">
+<div id="setup-option-types">
 <section id="section-10.1">
-        <h3 id="name-setup-parameter-types">
-<a href="#section-10.1" class="section-number selfRef">10.1. </a><a href="#name-setup-parameter-types" class="section-name selfRef">Setup Parameter Types</a>
+        <h3 id="name-setup-option-types">
+<a href="#section-10.1" class="section-number selfRef">10.1. </a><a href="#name-setup-option-types" class="section-name selfRef">Setup Option Types</a>
         </h3>
-<p id="section-10.1-1">This document registers the following Setup Parameter Types in the
-"MOQT Setup Parameters" registry:<a href="#section-10.1-1" class="pilcrow">¶</a></p>
+<p id="section-10.1-1">This document registers the following Setup Option Types in the
+"MOQT Setup Options" registry:<a href="#section-10.1-1" class="pilcrow">¶</a></p>
 <table class="center" id="table-4">
           <caption><a href="#table-4" class="selfRef">Table 4</a></caption>
 <thead>
@@ -2928,10 +2969,10 @@ SUBSCRIBE Message:
 <a href="#name-code-point-summary" class="section-name selfRef">Code Point Summary</a>
       </h2>
 <p id="appendix-C-1">This appendix summarizes all code points defined or used by this extension.<a href="#appendix-C-1" class="pilcrow">¶</a></p>
-<div id="setup-parameters">
+<div id="setup-options">
 <section id="appendix-C.1">
-        <h3 id="name-setup-parameters">
-<a href="#name-setup-parameters" class="section-name selfRef">Setup Parameters</a>
+        <h3 id="name-setup-options">
+<a href="#name-setup-options" class="section-name selfRef">Setup Options</a>
         </h3>
 <table class="center" id="table-10">
           <caption><a href="#table-10" class="selfRef">Table 10</a></caption>

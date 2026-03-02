@@ -96,7 +96,9 @@ Table of Contents
        5.6.6.  NAMESPACE
        5.6.7.  NAMESPACE_DONE
        5.6.8.  TRACK_STATUS
-       5.6.9.  Parameter-Only Messages
+       5.6.9.  SUBSCRIBE_OK
+       5.6.10. FETCH_OK
+       5.6.11. Parameter-Only Messages
    6.  QPACK Encoding
      6.1.  Compressed Block Format
      6.2.  Indexing
@@ -122,7 +124,7 @@ Table of Contents
      9.2.  Compression Oracle Attacks
      9.3.  Resource Exhaustion
    10. IANA Considerations
-     10.1.  Setup Parameter Types
+     10.1.  Setup Option Types
      10.2.  Unidirectional Stream Types
      10.3.  Pseudo-Parameter Types
      10.4.  Session Error Codes
@@ -137,7 +139,7 @@ Table of Contents
      SUBSCRIBE to Different Track, Same Namespace
      Total Savings
    Code Point Summary
-     Setup Parameters
+     Setup Options
      Stream Types
      Pseudo-Parameter Types
      MOQPACK Message Types
@@ -456,13 +458,13 @@ Table of Contents
      Track Alias (vi64),
      Compressed Block Length (vi64),
      Compressed Block (..),
-     Track Extensions (..)
+     Properties (..)
    }
 
    The Compressed Block contains namespace elements, TRACK_NAME, and any
-   parameters.  Track Extensions remain outside the compressed block and
-   use standard MOQT encoding, including IMMUTABLE_EXTENSIONS which are
-   not QPACK compressed.
+   parameters.  Properties remain outside the compressed block and use
+   standard MOQT encoding, including IMMUTABLE_EXTENSIONS which are not
+   QPACK compressed.
 
 5.6.3.  FETCH
 
@@ -545,25 +547,54 @@ Table of Contents
    The Compressed Block contains namespace elements, TRACK_NAME, and any
    applicable parameters.
 
-5.6.9.  Parameter-Only Messages
+5.6.9.  SUBSCRIBE_OK
 
-   The following messages have parameters but no namespace or track name
-   fields.  When MOQPACK is negotiated, these messages MAY use MOQPACK
-   format with the 0x40 flag bit set.  The MOQPACK format replaces the
-   standard Parameters field with a Compressed Block:
+   SUBSCRIBE_OK Message (MOQPACK) {
+     Type (vi64) = 0x44,
+     Length (16),
+     Request ID (vi64),
+     Compressed Block Length (vi64),
+     Compressed Block (..),
+     Properties (..)
+   }
+
+   The Compressed Block contains only parameters.  Properties remain
+   outside the Compressed Block and use standard MOQT encoding.  The
+   Compressed Block Length is required because Properties consume the
+   remainder of the message.
+
+5.6.10.  FETCH_OK
+
+   FETCH_OK Message (MOQPACK) {
+     Type (vi64) = 0x58,
+     Length (16),
+     Request ID (vi64),
+     Compressed Block Length (vi64),
+     Compressed Block (..),
+     Properties (..)
+   }
+
+   The Compressed Block contains only parameters.  Properties remain
+   outside the Compressed Block and use standard MOQT encoding.  The
+   Compressed Block Length is required because Properties consume the
+   remainder of the message.
+
+5.6.11.  Parameter-Only Messages
+
+   The following messages have parameters but no namespace, track name,
+   or trailing properties.  When MOQPACK is negotiated, these messages
+   MAY use MOQPACK format with the 0x40 flag bit set.  The MOQPACK
+   format replaces the standard Parameters field with a Compressed Block
+   that consumes the remainder of the message:
 
              +===============+==============+================+
              | Standard Type | MOQPACK Type | Message        |
              +===============+==============+================+
              | 0x02          | 0x42         | REQUEST_UPDATE |
              +---------------+--------------+----------------+
-             | 0x04          | 0x44         | SUBSCRIBE_OK   |
-             +---------------+--------------+----------------+
              | 0x05          | 0x45         | REQUEST_ERROR  |
              +---------------+--------------+----------------+
              | 0x07          | 0x47         | REQUEST_OK     |
-             +---------------+--------------+----------------+
-             | 0x18          | 0x58         | FETCH_OK       |
              +---------------+--------------+----------------+
              | 0x1E          | 0x5E         | PUBLISH_OK     |
              +---------------+--------------+----------------+
@@ -934,10 +965,10 @@ Table of Contents
 
 10.  IANA Considerations
 
-10.1.  Setup Parameter Types
+10.1.  Setup Option Types
 
-   This document registers the following Setup Parameter Types in the
-   "MOQT Setup Parameters" registry:
+   This document registers the following Setup Option Types in the "MOQT
+   Setup Options" registry:
 
     +================+===============================+===============+
     | Parameter Type | Parameter Name                | Specification |
@@ -1179,7 +1210,7 @@ Code Point Summary
    This appendix summarizes all code points defined or used by this
    extension.
 
-Setup Parameters
+Setup Options
 
                  +======+===============================+
                  | Type | Name                          |
